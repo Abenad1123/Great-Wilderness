@@ -1,0 +1,322 @@
+/* ─── Fonts ──────────────────────────────── */
+@font-face {
+  font-family: Roboto-R;
+    src: url('../assets/fonts/roboto/Roboto-Regular.ttf');
+}
+
+@font-face {
+  font-family: Roboto-I;
+  src: url('../assets/fonts/roboto/Roboto-Italic.ttf');
+}
+
+@font-face {
+  font-family: Roboto-B; 
+    src: url('../assets/fonts/roboto/Roboto-Bold.ttf');
+}
+
+@font-face {
+  font-family: Roboto-BI;
+    src: url('../assets/fonts/roboto/Roboto-BoldItalic.ttf');
+}
+
+/* ─── Variables ──────────────────────────────── */
+:root {
+	--loc-ink:        #F0F0F0;
+	--loc-ink-soft:   #F0F0F0;
+	--loc-rule:       #7a6a50;
+	--loc-rule-lt:    #5a4e38;
+	--loc-border:     #5a4e38;
+
+	--loc-btn-bg:       rgba(30, 22, 10, 0.55);
+	--loc-btn-bg-hover: rgba(50, 38, 18, 0.75);
+	--loc-tile-bg:      rgba(25, 18, 8, 0.60);
+	--loc-tile-bg-hover:rgba(45, 34, 15, 0.80);
+
+	--col-home:    #c47d1a;
+	--col-known:   #4a8c41;
+	--col-work:    #8a7a5a;
+	--col-unknown: #7a7090;
+	--col-danger:  #b03030;
+	--col-locked:  #6a6055;
+	--col-sacred:  #5a70aa;
+}
+
+/* ─── Location Header ────────────────────────── */
+.loc-header {
+	border-bottom: 1px solid var(--loc-rule);
+	padding-bottom: 1rem;
+	margin-bottom: 1.2rem;
+	text-align: center;
+}
+
+.loc-title {
+	font-family: 'Cinzel', serif;
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: var(--loc-ink);
+	letter-spacing: 0.05em;
+	margin: 0 0 0.4rem;
+}
+
+.loc-title-rule {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin: 0 auto 0.6rem;
+	max-width: 340px;
+}
+
+.loc-title-rule span {
+	flex: 1;
+	height: 1px;
+	background: var(--loc-rule);
+	display: block;
+}
+
+.loc-title-rule em {
+	font-family: 'Cinzel', serif;
+	font-style: normal;
+	font-size: 0.62rem;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--loc-rule);
+}
+
+.loc-desc {
+	font-family: Roboto-R;
+	font-size: 0.98rem;
+	font-style: italic;
+	color: var(--loc-ink-soft);
+	margin: 0;
+	line-height: 1.55;
+}
+
+/* ─── Context Bar ────────────────────────────── */
+.loc-context {
+	border-left: 3px solid var(--loc-rule);
+	background: rgba(20, 14, 4, 0.4);
+	padding: 0.55rem 0.9rem;
+	font-family: Roboto-R;
+	font-size: 1rem;
+	font-style: italic;
+	color: var(--loc-ink-soft);
+	margin-bottom: 1.3rem;
+}
+
+/* ─── Sections ───────────────────────────────── */
+.loc-section {
+	margin-bottom: 1.3rem;
+}
+
+.loc-section-label {
+	font-family: 'Cinzel', serif;
+	font-size: 0.6rem;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--loc-rule);
+	margin: 0 0 0.6rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.loc-section-label::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--loc-rule-lt);
+}
+
+/* ─── Action Grid ────────────────────────────── */
+.action-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.4rem;
+}
+
+.action-grid a {
+	display: block;
+	padding: 0.5rem 0.85rem;
+	background: var(--loc-btn-bg);
+	border: 1px solid var(--loc-border);
+	border-radius: 2px;
+	color: var(--loc-ink-soft) !important;
+	font-family: Roboto-R;
+	font-size: 1rem;
+	text-decoration: none !important;
+	transition: background 0.15s, border-color 0.15s, color 0.15s, padding-left 0.15s;
+}
+
+.action-grid a:hover {
+	background: var(--loc-btn-bg-hover);
+	border-color: var(--loc-rule);
+	color: var(--loc-ink) !important;
+	padding-left: 1.1rem;
+}
+
+/* ─── Map Grid ───────────────────────────────── */
+.map-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.5rem;
+}
+
+.map-tile {
+	display: contents;
+}
+
+.map-tile a {
+	display: block;
+	padding: 0.7rem 0.6rem;
+	background: var(--loc-tile-bg);
+	border: 1px solid var(--loc-border);
+	border-radius: 2px;
+	border-top-width: 3px;
+	color: var(--loc-ink) !important;
+	font-family: Roboto-R;
+	font-size: 0.92rem;
+	text-decoration: none !important;
+	text-align: center;
+	line-height: 1.35;
+	transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.map-tile a:hover {
+	background: var(--loc-tile-bg-hover);
+	transform: translateY(-2px);
+	border-color: var(--loc-rule);
+	color: var(--loc-ink) !important;
+}
+
+/* ── Tile Variants ───────────────────────────── */
+
+/* Home — the player's own residence */
+.map-tile--home a {
+	border-top-color: var(--col-home);
+}
+.map-tile--home a::before {
+	content: 'Home';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-home);
+	margin-bottom: 0.25rem;
+}
+.map-tile--home a:hover {
+	border-top-color: var(--col-home);
+	color: var(--col-home) !important;
+}
+
+.map-tile--known a {
+	border-top-color: var(--col-known);
+}
+.map-tile--known a::before {
+	content: 'Known';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-known);
+	margin-bottom: 0.25rem;
+}
+.map-tile--known a:hover {
+	border-top-color: var(--col-known);
+	color: var(--col-known) !important;
+}
+
+.map-tile--work a {
+	border-top-color: var(--col-work);
+}
+.map-tile--work a::before {
+	content: 'Trade';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-work);
+	margin-bottom: 0.25rem;
+}
+.map-tile--work a:hover {
+	border-top-color: var(--col-work);
+	color: var(--col-work) !important;
+}
+
+.map-tile--unknown a {
+	border-top-color: var(--col-unknown);
+	opacity: 0.75;
+}
+
+.map-tile--unknown a::before {
+	content: 'Unknown';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-unknown);
+	margin-bottom: 0.25rem;
+}
+
+.map-tile--unknown a:hover {
+	border-top-color: var(--col-unknown);
+	color: var(--col-unknown) !important;
+	opacity: 1;
+}
+
+.map-tile--danger a {
+	border-top-color: var(--col-danger);
+}
+.map-tile--danger a::before {
+	content: 'Dangerous';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-danger);
+	margin-bottom: 0.25rem;
+}
+.map-tile--danger a:hover {
+	border-top-color: var(--col-danger);
+	color: var(--col-danger) !important;
+}
+
+.map-tile--locked a {
+	border-top-color: var(--col-locked);
+	opacity: 0.55;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+.map-tile--locked a::before {
+	content: 'Locked';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-locked);
+	margin-bottom: 0.25rem;
+}
+
+.map-tile--sacred a {
+	border-top-color: var(--col-sacred);
+}
+.map-tile--sacred a::before {
+	content: 'Sacred';
+	display: block;
+	font-family: 'Cinzel', serif;
+	font-size: 0.55rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--col-sacred);
+	margin-bottom: 0.25rem;
+}
+.map-tile--sacred a:hover { 
+	border-top-color: var(--col-sacred); 
+	color: var(--col-sacred) !important;
+}
