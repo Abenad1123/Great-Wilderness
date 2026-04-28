@@ -51,6 +51,8 @@ $player = {
     karma: 0,
     comprehension: 1,
     potential: 0,
+    evasion: 0,
+    atkSpeed: 0,
     
     weapon: {
         proficiency: {

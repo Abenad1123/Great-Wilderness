@@ -378,6 +378,8 @@ setup.CalcStat = function (target = State.variables.player) {
     target.cur.sta += target.sta - oldSTA;
 
     target.power = setup.CalculatePOW(target.str);
+    target.evasion = (target.agi * 0.4) * (target.per * 0.6) + 1;
+    target.atkSpeed = (target.agi * 0.6) * (target.per * 0.4) + 1;
 
     if (target == State.variables.player) setup.updateBars();
 };
