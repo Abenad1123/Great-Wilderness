@@ -84,7 +84,7 @@ setup.NatRegenPlayer = function (tick, consMulti) {
     let STAVal = (setup.regenSTA(player.cur.sta, player.sta, consMulti) * tick) / 60;
 
     if(((HPVal + STAVal)) > player.body.energy){
-        setup.pushGameLog("You need to eat!");
+        setup.pushGameLog("Your body lacks energy; you need to eat.");
         console.log(`Not enough energy!\nRegen HP Value : ${HPVal}\nRegen STA Value : ${STAVal}`);
         return;
     }
@@ -209,7 +209,7 @@ setup.enemyTurn = function(){
     let actionID;
 
     if(action === null){
-        if(((enemy.cur.sta / enemy.sta) * 100) < 30){
+        if(((enemy.cur.sta / enemy.sta) * 100) < State.variables.setting.enemy.restToggle){
             action = "Rest";
         }
         else {
@@ -281,7 +281,7 @@ setup.renderNextTurn = function(){
     if(vars.battle.order[0] !== vars.player.name){
         setTimeout(() => {
             setup.enemyTurn();
-        }, 1000);
+        }, vars.setting.battle.response);
     }
     
   	setup.generateBattleOrder(vars.entity, vars.player);
@@ -330,7 +330,7 @@ setup.engageBattle = function(target, source = State.variables.player){
         if(vars.battle.order[0] != State.variables.player.name){
             setup.enemyTurn();
         }
-    }, 1000);
+    }, vars.setting.battle.response);
 }
 
 setup.generateBattleOrder = function(source, target, startBattle = false){
