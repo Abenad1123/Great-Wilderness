@@ -1,3 +1,5 @@
+
+
 Config.history.controls = false;
 Config.history.maxStates = 1;
 Config.saves.maxSlotSaves = 5;
@@ -82,6 +84,7 @@ setup.NatRegenPlayer = function (tick, consMulti) {
     let STAVal = (setup.regenSTA(player.cur.sta, player.sta, consMulti) * tick) / 60;
 
     if(((HPVal + STAVal)) > player.body.energy){
+        setup.pushGameLog("You need to eat!");
         console.log(`Not enough energy!\nRegen HP Value : ${HPVal}\nRegen STA Value : ${STAVal}`);
         return;
     }
@@ -119,83 +122,58 @@ setup.toggleSTA = function (amount, target = State.variables.player) {
     setup.updateBars();
 };
 
-Macro.add("RenderBattle", {
-    handler: function () {
-        let player = State.variables.player;
-        let playerAction = this.args[0];
-        let playerActionID = this.args[1];
-        let playerDamage = 0;
+setup.playerTurn = function(action, actionID = 0){
+    let player = State.variables.player;
 
-        let enemy = State.variables.entity;
-        let enemyAction;
-        let enemyActionID;
-        let enemyDamage = 0;
+    if(State.variables.battle.order[0] !== player.name) return;
 
-        let battleLog = State.variables.battleLog;
+    if(setup.battleCheckState() === true) return;
 
-        if(setup.isAlive(enemy) == false) {
-            enemy.state = "Dead";
-            setup.pushGameLog(`You defeated ${enemy.name}`);
-            setup.RenderText("battle-panel", "Battle_Panel");
-            return;
-        }
+    let enemy = State.variables.entity;
+    let damage = 0;
 
-        // Get evasion and attack speed of both side
-        let playerEva = (player.agi * 0.4) * (player.per * 0.6) + 1;
-        let playerAtkSpd = (player.agi * 0.6) * (player.per * 0.4) + 1;
+    action = setup.runStatusEffect(player) === "Stunned" ? "Stunned" : action;
 
-        let enemyEva = (enemy.agi * 0.4) * (enemy.per * 0.6) + 1;
-        let enemyAtkSpd = (enemy.agi * 0.6) * (enemy.per * 0.4) + 1;
-
-        // Take Status Effect
-        playerAction = setup.runStatusEffect(player) === "Stunned" ? "Stunned" : playerAction;
-        enemyAction = setup.runStatusEffect(enemy) === "Stunned" ? "Stunned" : enemyAction;
-
-        //  ----------------- PLAYER'S TURN
-
-        if(playerAction == "Stunned"){}
-      
-        if(playerAction == "Wait"){
+    switch(action){
+        case "Stunned":
+            break;
+        case "Wait":
             setup.updateBattleLog(`You decided wait and observe`);
-        }
-
-        if(playerAction == "Rest"){
+            break;
+        case "Flee":
+            setup.open_panel("Battle_Flee_Panel");
+            break;
+        case "Rest":
             let staRestoreValue = Math.random() * (3 - 1) + 1;
             setup.updateBattleLog(`You decided to rest, restoring ${staRestoreValue.toFixed(2)} stamina`);
             setup.toggleSTA(staRestoreValue);
-        }
-
-        if(playerAction == "Flee") {
-            setup.open_panel("Battle_Flee_Panel");
-            return;
-        }
-
-        if(playerAction == "Attack"){
-            // Checks if player has the right weapon to perform that skill
-            if(!setup.meetsWeaponRequirement(player, playerActionID)){
+            break;
+        case "Attack":
+             // Checks if player has the right weapon to perform that skill
+            if(!setup.meetsWeaponRequirement(player, actionID)){
                 setup.updateBattleLog("You aren't able to execute that skill as you don't have the right weapon to do that");
                 return;
             }
 
             // Checks if player can afford the cost to perform that skill
-            let canAfford = setup.skill[playerActionID].cost(player);
+            let canAfford = setup.skill[actionID].cost(player);
             if (!canAfford) {
-                setup.updateBattleLog(`You are too exhausted to use ${setup.skill[playerActionID].name}.`);
+                setup.updateBattleLog(`You are too exhausted to use ${setup.skill[actionID].name}.`);
                 return;
             }
 
             // Checks if player's attack hit the enemy successfully
-            let playerHit = Math.floor(Math.random() * (100 - 1) + 1) < ((playerAtkSpd / enemyEva) * 100) ? true : false;
+            let playerHit = Math.floor(Math.random() * (100 - 1) + 1) < ((player.atkSpeed / enemy.evasion) * 100) ? true : false;
 
             if(playerHit){
-                playerDamage = setup.skill[playerActionID].action(player);
-                enemy.cur.hp -= playerDamage;
+                damage = setup.skill[actionID].action(player);
+                enemy.cur.hp -= damage;
                 setup.updateBattleLog(
-                    `${player.name} attacked ${enemy.name} using ${setup.skill[playerActionID].name} dealing ${playerDamage.toFixed(2)} damage`,
+                    `${player.name} attacked ${enemy.name} using ${setup.skill[actionID].name} dealing ${damage.toFixed(2)} damage`,
                 );
                 
-                if(setup.skill[playerActionID].tag.includes("Status Effect") && typeof setup.skill[playerActionID].status === "function"){
-                    let playerDealStatus = setup.skill[playerActionID].status(enemy);
+                if(setup.skill[actionID].tag.includes("Status Effect") && typeof setup.skill[actionID].status === "function"){
+                    let playerDealStatus = setup.skill[actionID].status(enemy);
 
                     if(playerDealStatus && playerDealStatus[2]){
                         setup.updateBattleLog(
@@ -213,46 +191,63 @@ Macro.add("RenderBattle", {
             } else {
                 setup.updateBattleLog(`${enemy.name} evaded the attack receiving no damage!`);
             }
-        }
+            break;
+        case "Defend":
+            break;
+    }
 
-        // ----------------- ENEMY'S TURN
-      
-        if(enemyAction == "Stunned"){}
-        else{
-             // Checks if enemy health percentage is less than 40%
-            if(((enemy.cur.sta / enemy.sta) * 100) < 30)
-                enemyAction = "Rest";
-            else
-                enemyAction = "Attack";
-        }
+    setup.renderNextTurn();
+}
 
-        if(enemyAction == "Rest"){
+setup.enemyTurn = function(){
+    if(setup.battleCheckState() === true) return;
+
+    let enemy = State.variables.entity;
+    let player = State.variables.player;
+    let action = setup.runStatusEffect(enemy) === "Stunned" ? "Stunned" : null;
+    let damage = 0;
+    let actionID;
+
+    if(action === null){
+        if(((enemy.cur.sta / enemy.sta) * 100) < 30){
+            action = "Rest";
+        }
+        else {
+            action = "Attack";
+        }
+    }
+
+    switch(action){
+        case "Stunned":
+            break;
+        case "Wait":
+            break;
+        case "Flee":
+            break;
+        case "Rest":
             let enemyStaRestoreValue = Math.random() * (3 - 1) + 1;
             setup.updateBattleLog(`${enemy.name} decided to rest, restoring ${enemyStaRestoreValue.toFixed(2)} stamina`);
             setup.toggleSTA(enemyStaRestoreValue, enemy);
-        }
-
-        if(enemyAction == "Flee") {}
-
-        if(enemyAction == "Attack"){
+            break;
+        case "Attack":
             for (let i = 0; i < enemy.skill.active.length; i++) {
-                enemyActionID = enemy.skill.active[Math.floor(Math.random() * (enemy.skill.active.length - 0) + 0)];
-                let enemyCanAfford = setup.skill[enemyActionID].cost(enemy);
+                actionID = enemy.skill.active[Math.floor(Math.random() * (enemy.skill.active.length - 0) + 0)];
+                let enemyCanAfford = setup.skill[actionID].cost(enemy);
 
                 if(enemyCanAfford) break;
             }
 
-            let enemyHit = Math.floor(Math.random() * (100 - 1) + 1) < ((enemyAtkSpd / playerEva) * 100) ? true : false;
+            let enemyHit = Math.floor(Math.random() * (100 - 1) + 1) < ((enemy.atkSpeed / player.evasion) * 100) ? true : false;
 
             if(enemyHit){
-                enemyDamage = setup.skill[enemyActionID].action(enemy);
-                player.cur.hp -= enemyDamage;
+                damage = setup.skill[actionID].action(enemy);
+                player.cur.hp -= damage;
                 setup.updateBattleLog(
-                    `${enemy.name} attacked ${player.name} using ${setup.skill[enemyActionID].name} dealing ${enemyDamage.toFixed(2)} damage`,
+                    `${enemy.name} attacked ${player.name} using ${setup.skill[actionID].name} dealing ${damage.toFixed(2)} damage`,
                 );
                 
-                if(setup.skill[enemyActionID].tag.includes("Status Effect")  && typeof setup.skill[playerActionID].status === "function"){
-                    let enemyDealStatus = setup.skill[enemyActionID].status(player);
+                if(setup.skill[actionID].tag.includes("Status Effect")  && typeof setup.skill[actionID].status === "function"){
+                    let enemyDealStatus = setup.skill[actionID].status(player);
                     
                     if(enemyDealStatus[2]){
                         setup.updateBattleLog(
@@ -266,13 +261,119 @@ Macro.add("RenderBattle", {
                     setup.open_panel("Player_Death_Panel");
                     return;
                 }
-
-            } else {
+            } else{
                 setup.updateBattleLog(`${player.name} evaded the attack receiving no damage!`);
             }
+            break;
+        case "Defend":
+            break;
+    }
+
+    setup.renderNextTurn();
+}
+
+setup.renderNextTurn = function(){
+    const vars = State.variables;
+
+    vars.battle.order.shift();
+    setup.RenderText("battle-panel", "Battle_Panel");
+
+    if(vars.battle.order[0] !== vars.player.name){
+        setTimeout(() => {
+            setup.enemyTurn();
+        }, 1000);
+    }
+    
+  	setup.generateBattleOrder(vars.entity, vars.player);
+}
+
+setup.battleCheckState = function(){
+    const vars = State.variables;
+    let enemy = vars.entity;
+    let player = vars.player;
+
+    if(setup.isAlive(enemy) == false) {
+        enemy.state = "Dead";
+        setup.pushGameLog(`You defeated ${enemy.name}`);
+        setup.RenderText("battle-panel", "Battle_Panel");
+        return true;
+    }else if(setup.isAlive(player) == false) {
+        player.state = "Dead";
+        setup.open_panel("Player_Death_Panel");
+        return true;
+    }else {
+        return false;
+    }
+}
+
+setup.engageBattle = function(target, source = State.variables.player){
+    if(target === undefined){
+        setup.logError(`${target} doesnt exist!`, "MEV");
+        return;
+    }
+
+    const vars = State.variables;
+
+    if(vars.battle === undefined){
+        setup.logError("B401", "FER");
+        setup.logError("Cannot generate battle order!", "FER");
+        return;
+    }
+
+    vars.battle.source = source;
+    vars.battle.target = target;
+    vars.battle.order = [];
+
+    setup.generateBattleOrder(source, target, true);
+
+    setTimeout(() => {
+        if(vars.battle.order[0] != State.variables.player.name){
+            setup.enemyTurn();
         }
-    },
-});
+    }, 1000);
+}
+
+setup.generateBattleOrder = function(source, target, startBattle = false){
+    const vars = State.variables;
+    
+    if(vars.battle === undefined){
+        setup.logError("B401", "FER");
+        setup.logError("Cannot generate battle order!", "FER");
+        return;
+    }
+
+    let sourceChance = source.agi + source.per + (source.int / 4) + 5;
+    let targetChance = target.agi + target.per + (target.int / 4) + 5;
+
+    if(vars.battle.order.length === 0 && startBattle === true){
+        vars.battle.order.push(source.name);
+
+        for(let i = 0; i <= 9; i++){
+            let draw = Math.floor(Math.random() * (sourceChance + targetChance - 1) ) + 1;
+
+            if(draw <= sourceChance){
+                vars.battle.order.push(source.name);
+            } else {
+                vars.battle.order.push(target.name);
+            }
+
+            console.log(`Order ${i} : ${vars.battle.order[i]}`);
+        }
+    } else {
+        let draw = Math.floor(Math.random() * (sourceChance + targetChance - 1) ) + 1;
+
+        if(draw <= sourceChance){
+            vars.battle.order.push(source.name);
+        } else {
+            vars.battle.order.push(target.name);
+        }
+
+        console.clear();
+        for(let i = 0; i <= vars.battle.order.length; i++){
+            console.log(`Order ${i} : ${vars.battle.order[i]}`);
+        }
+    }
+}
 
 // Use only for battle
 setup.runStatusEffect = function(target){
@@ -334,6 +435,11 @@ setup.targetHasStatus = function(SID, target){
 
 setup.updateBattleLog = function(txt){
     let battleLog = State.variables.battleLog;
+
+    if(battleLog === undefined){
+        setup.logError("battle log cannot be found!", "MSV");
+        return;
+    }
 
     if(battleLog.length >= 10) battleLog.shift();
 
@@ -489,3 +595,42 @@ Macro.add("DeleteFile", {
         setup.RenderTextSave("save-panel", "Save_Panel", true);
     },
 });
+
+setup.logError = function(txt, errorType){
+    switch(errorType){
+        case "FER": // Fatal Error
+            console.log(`%cFatal Error : %c${txt}`, "color: red;", "color: white;");
+            break;
+        case "CER": // Common Error
+            console.log(`%cCommon Error : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "MEV": // Missing Entity Variable
+            console.log(`%cMissing Entity Var : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "MSV": // Missing System Variable
+            console.log(`%cMissing System Var : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "MIV": // Missing Item Variable
+            console.log(`%cMissing Item Var : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "MIV": // Missing Skill Variable
+            console.log(`%cMissing Skill Var : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "MPV": // Missing Player Variable
+            console.log(`%cMissing Player Var : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        case "CER": // Connection Error for other Errors
+            console.log(`%cError : %c${txt}`, "color: orange;", "color: white;");
+            break;
+        default:
+            console.log(`%cError msg type doesn't exist : %c${txt}`, "color: red;", "color: white;");
+            break;
+    }
+}
+
+setup.pluralize = function(value, singular, plural){
+    if(value === 0)
+        return value + " " + singular;
+    else 
+        return value + " " + (value === 1 ? singular : plural);
+}
