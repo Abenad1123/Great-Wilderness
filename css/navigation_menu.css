@@ -53,7 +53,9 @@
   height: 175px;
 }
 
-/*----- UI NAVIGATION TIME -----*/
+#ui-nav-evnt-b span {
+  font-size: 12px;
+}
 
 /*----- UI NAVIGATION TIME -----*/
 
@@ -200,3 +202,7 @@
   filter: drop-shadow(0px 0px 2px rgba(64, 244, 57, 0.1));
 }
 .ui-nav-btn-col { flex-direction: column; }
+
+.locked-button a{
+  border: 2px solid #16110f;
+}
