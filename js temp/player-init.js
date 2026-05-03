@@ -1,3 +1,52 @@
+$world = {
+    area: {},
+    seed: 23491,
+
+    time: {
+        day: Math.floor(Math.random() * (250 - 50) + 50),
+        year: Math.floor(Math.random() * (300 - 250) + 250)
+    }
+};
+
+$system = {
+    debug: true,
+    newCHar: false,
+    version: "0.3 Dev"
+};
+
+$defaultTxt = {
+    unknownArea: "Unkown Area"
+};
+
+$time = {
+    minute: 0,
+    hour: 0,
+    day: 0,
+    year: 0
+};
+
+$log = {
+    kills : 0,
+    time: {
+        sleep: 0,
+        travel: 0
+    }
+};
+
+$setting = {
+	battle: {
+    	response: 1000
+    },
+    enemy: {
+    	restToggle: 30
+    }
+};
+
+$achievement = [];
+$gameLog = [];
+$battleLog = [];
+$prevPassage = "";
+
 $player = {
     name: "John Doe",
     race: "",
@@ -21,7 +70,36 @@ $player = {
         rightAcc: 0,
         neck: 0
     },
-    inventory: {},
+    inventory: {
+    	1001: {
+        	"system1": {
+            	quantity: 1,
+            	durability: 8
+            },
+            "system2": {
+            	quantity: 1,
+            	durability: 10
+            }
+        },
+        1003: {
+         	"system3": {
+                quantity: 1,
+                durability: 50
+            }
+        },
+        1004: {
+        	"system4": {
+                quantity: 1,
+                durability: 50
+            }
+        },
+        1006: {
+        	quantity: 10,
+        },
+        1007: {
+        	quantity: 10,
+        }
+    },
     skill: {
         active: [ 101, 102, 103, 104, 108, 109],
         passive: [110],

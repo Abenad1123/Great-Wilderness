@@ -634,3 +634,34 @@ setup.pluralize = function(value, singular, plural){
     else 
         return value + " " + (value === 1 ? singular : plural);
 }
+
+setup.checkAchievement = function(){
+    const logs = State.variables.log;
+    const achievements = State.variables.achievement;
+
+    if(State.variables.achievement === undefined){
+        setup.logError("achievement variable not found!", "FER");
+        return;
+    }
+
+    const sleepAch = [
+        { threshold: 259200, id: 1005 },
+        { threshold: 64000,  id: 1004 },
+        { threshold: 43200,  id: 1003 },
+        { threshold: 7200,   id: 1002 },
+        { threshold: 1440,   id: 1001 },
+    ];
+    const killAch = [
+        { threshold: 100000, id: 1010 },
+        { threshold: 10000,  id: 1009 },
+        { threshold: 1000,   id: 1008 },
+        { threshold: 100,    id: 1007 },
+        { threshold: 10,     id: 1006 },
+    ];
+
+    var achieved = sleepAch.find(a => logs.time.sleep >= a.threshold);
+    if (achieved) achievements.push(achieved.id);
+
+    var achieved = killAch.find(a => logs.time.sleep >= a.threshold);
+    if (achieved) achievements.push(achieved.id);
+}
