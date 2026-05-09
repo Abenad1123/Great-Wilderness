@@ -11,7 +11,8 @@ $world = {
 $system = {
     debug: true,
     newCHar: false,
-    version: "0.3 Dev"
+    version: "0.3 Dev",
+    inBattle: false
 };
 
 $defaultTxt = {

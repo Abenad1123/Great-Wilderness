@@ -220,7 +220,12 @@ setup.enemyTurn = function(){
     switch(action){
         case "Stunned":
             break;
-        case "Wait":
+        case "Wait":l
+            let totalStat = enemy.str + enemy.con + enemy.int + enemy.agi + enemy.per;
+            let targetTotalStat = payer.str + player.con + player.int + player.agi + player.per;
+            if((totalStat / targetTotalStat) > 1.5){
+                setup.updateBattleLog(`${enemy.name} decided wait and observe the situation`);
+            }
             break;
         case "Flee":
             break;
@@ -466,6 +471,11 @@ setup.meetsWeaponRequirement = function(target, ActionID) {
 }
 
 setup.isAlive = function(target = State.variables.player) {
+     if(target === undefined){
+        setup.logError("Target doesnt exist; Cannot determine state", "FER");
+        return;
+     }
+
     if (!target || !target.cur) {
         console.log("Entity doesn't exist");
         return;
@@ -665,3 +675,33 @@ setup.checkAchievement = function(){
     var achieved = killAch.find(a => logs.time.sleep >= a.threshold);
     if (achieved) achievements.push(achieved.id);
 }
+
+Macro.add("play", {
+    handler: function () {
+        let nextPassage = this.args[0];
+        Engine.play(nextPassage);
+    },
+});
+
+Macro.add("goback", {
+    handler: function () {
+        let passages = State.variables.passages;
+
+        passages.pop();
+        let prev = passages[passages.length - 1];
+        Engine.play(prev);
+        console.log(State.variables.passages);
+    },
+});
+
+$(document).on(':passagestart', function (ev) {
+	if (!ev.passage.tags.includes('noreturn')) {
+		State.temporary.return = ev.passage.name;
+        State.variables.passages.push(State.temporary.return);
+        console.log(State.variables.passages);
+
+        if(State.variables.passages.length >= 10){
+            State.variables.passages.shift();
+        }
+	}
+});
