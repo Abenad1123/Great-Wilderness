@@ -146,6 +146,10 @@ $time = {
 
 $system = {
     version: "0.4",
-}
+};
+
+$events = {
+    completed: false
+};
 
 $shopGenData = {};
