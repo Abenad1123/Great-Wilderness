@@ -33,29 +33,16 @@ $pc = {
     },
 
     // VOLATILE STATS
-    hps: null,
-    sta: null,
-    san: null,
+    hps: [null, null],
+    sta: [null, null],
+    san: [null, null],
 
     // PERMANENT STATS
-    str: null,
-    con: null,
-    int: null,
-    agi: null,
-    per: null,
-
-    // CURRENT STATS AFFECTED BY STATUS AND SUCH
-    cur: {
-        hps: null,
-        sta: null,
-        san: null,
-
-        str: null,
-        con: null,
-        int: null,
-        agi: null,
-        per: null
-    },
+    str: [null, null],
+    con: [null, null],
+    int: [null, null],
+    agi: [null, null],
+    per: [null, null],
 
     // SPECIFIC STATS
     wisdom: null,
