@@ -1,0 +1,5 @@
+setup.staticNPC = {
+    101: {
+        
+    }
+}

@@ -1,5 +1,4 @@
 // Version 0.4 InDev
-// <<script>>
 setup.item = {
     1001: {
         name: "Green Apple",
@@ -7,9 +6,7 @@ setup.item = {
         tags: [],
         description: "",
         img: "",
-        stats: {
-            energy: 5
-        }
+        stats: {}
     },
     1002: {
         name: "Wooden Stick",
@@ -17,9 +14,7 @@ setup.item = {
         tags: [],
         description: "",
         img: "",
-        stats: {
-            durability: [10, 10]
-        }
+        stats: {}
     },
     1003: {
         name: "Iron Ore",
@@ -38,4 +33,3 @@ setup.item = {
         stats: {}
     },
 }
-// <</script>>
