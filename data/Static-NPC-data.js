@@ -1,5 +1,1 @@
-setup.staticNPC = {
-    101: {
-        
-    }
-}
+setup.staticNPC = {}
