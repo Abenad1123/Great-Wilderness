@@ -197,6 +197,12 @@ setup.RenderText = function (id, panel, isClass = false) {
     $el.wiki(`<<include "${panel}">>`);
 };
 
+setup.RenderNavigation = function() {
+    setup.RenderText("nav-time-container", "Nav-Time");
+    setup.RenderText("nav-stat-container", "Nav-Stat");
+    setup.RenderText("nav-event-body", "Nav-Event");
+}
+
 Macro.add("play", {
     handler: function () {
         let nextPassage = this.args[0];
@@ -230,8 +236,7 @@ Macro.add("RenderTime", {
 
         setup.NatRegen(vars.pc, tick);
 
-        setup.RenderText("nav-time-container", "Nav-Time");
-        setup.RenderText("nav-stat-container", "Nav-Stat");
+        setup.RenderNavigation();
     }
 });
 
@@ -266,7 +271,30 @@ setup.randInt =  function(min, max) {
     let result = Math.floor(Math.random() * (max - min + 1) ) + min;
     return result;
 }
-</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="100,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
+
+setup.pushGameLog = function(text) {
+    let gameLog = State.variables.gameLog;
+    let last = gameLog[gameLog.length - 1];
+
+    if (last) {
+        const baseLast = last.replace(/ x\d+$/, "");
+        const baseText = text.replace(/ x\d+$/, "");
+
+        if (baseLast === baseText) {
+            const match = last.match(/ x(\d+)$/);
+            const count = match ? Number(match[1]) + 1 : 2;
+
+            gameLog[gameLog.length - 1] = `${baseText} x${count}`;
+            return;
+        }
+    }
+
+    if (gameLog.length >= 10) {
+        gameLog.shift();
+    }
+
+    gameLog.push(text);
+};</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="100,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
 	&lt;&lt;include &quot;Debug-PC-Data&quot;&gt;&gt;
     &lt;&lt;run setup.CalculateStat($pc)&gt;&gt;
     &lt;&lt;play &quot;Untitled Passage&quot;&gt;&gt;
@@ -720,9 +748,9 @@ $pc = {
 
 $system = {
     debug: true,
-    newCHar: false,
     version: &quot;0.3 Dev&quot;,
-    inBattle: false
+    inBattle: false,
+    cheats: false
 };
 
 $achievement = {
@@ -756,16 +784,13 @@ $world = {
     }
 }
 
-$system = {
-    version: &quot;0.4&quot;,
-};
-
 $events = {
     running: false
 };
 
-$shopGenData = {};
+$gameLog = [];
 
+$shopGenData = {};
 
 $staticNPC = {};
 &gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="S00001-Data" tags="" position="2075,450" size="100,100">&lt;&lt;script&gt;&gt;
@@ -880,7 +905,12 @@ Do you really want to restart?
 &lt;&lt;button &quot;No&quot;&gt;&gt;
 	&lt;&lt;run Dialog.close();&gt;&gt;
 &lt;&lt;/button&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="Nav-Event" tags="nobr panel" position="1000,575" size="200,100"></tw-passagedata><tw-passagedata pid="31" name="Nav-Stat" tags="nobr panel" position="1000,700" size="200,100">Health : &lt;&lt;= $pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= $pc.hps[1].toFixed(2)&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="Nav-Event" tags="nobr panel" position="1000,575" size="200,100">&lt;&lt;if $gameLog.length &gt; 0&gt;&gt;
+&lt;&lt;for _i = $gameLog.length - 1; _i &gt;= 0; _i--&gt;&gt;
+	&lt;&lt;= $gameLog[_i]&gt;&gt;
+    &lt;br&gt;
+&lt;&lt;/for&gt;&gt;
+&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="31" name="Nav-Stat" tags="nobr panel" position="1000,700" size="200,100">Health : &lt;&lt;= $pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= $pc.hps[1].toFixed(2)&gt;&gt;
 &lt;br&gt;
 Stamina : &lt;&lt;= $pc.sta[0].toFixed(2)&gt;&gt;/ &lt;&lt;= $pc.sta[1].toFixed(2)&gt;&gt;
 &lt;br&gt;
@@ -1049,6 +1079,18 @@ Macro.add(&quot;Harm&quot;, {
         setup.entityHarm(entity, damage);
     }
 });
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="41" name="Inventory--Logic" tags="logic" position="2300,150" size="200,100">&lt;&lt;script&gt;&gt;
+setup.inventoryPush = function(entity, itemID, amount) {
+    if(setup.item[itemID] === undefined) return;
+
+    const item = setup.item[itemID];
+
+}
+
+setup.equipItem = function(entity, itemID) {
+    if(entity.inventory[itemID] === undefined) return;
+}
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="42" name="NPC-Gen--Logic" tags="logic" position="2300,275" size="200,100">&lt;&lt;script&gt;&gt;
 &lt;&lt;/script&gt;&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
