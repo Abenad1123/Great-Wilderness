@@ -320,6 +320,29 @@ setup.getRoll = function(entity, min, max, goal = "Higher") {
 
 setup.validateStat = function(entity){
     
+}
+
+setup.log = {
+        info: message => console.log(
+            "%c[INFO]%c " + message, 
+            "color: #0000ff; font-weight: bold;",
+            "color: inherit;"
+        ),
+        success: message => console.log(
+            "%c[SUCCESS]%c " + message, 
+            "color: #09ff00; font-weight: bold;",
+            "color: inherit;"
+        ),
+        warning: message => console.warn(
+            "%c[WARNING]%c " + message, 
+            "color: #ffdd00; font-weight: bold;",
+            "color: inherit;"
+        ),
+        error: message => console.error(
+            "%c[ERROR]%c " + message, 
+            "color: #ff0000; font-weight: bold;",
+            "color: inherit;"
+        )
 }</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="100,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
 	&lt;&lt;include &quot;Debug-PC-Data&quot;&gt;&gt;
     &lt;&lt;run setup.CalculateStat($pc)&gt;&gt;
@@ -659,9 +682,7 @@ $(document).on(&#39;:passagerender&#39;, function() {
 &lt;&lt;/button&gt;&gt;
 
 &lt;&lt;done&gt;&gt;
-&lt;&lt;if $events.running == false&gt;&gt;
-  &lt;&lt;run setup.startScene()&gt;&gt;
-&lt;&lt;/if&gt;&gt;
+&lt;&lt;run setup.startScene()&gt;&gt;
 &lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="Debug-Shop" tags="" position="25,975" size="200,100">&lt;&lt;if $shopGenData[101] === undefined&gt;&gt;
 	&lt;&lt;run
         $shopGenData[101] = {
@@ -939,9 +960,7 @@ $world = {
     area: {}
 }
 
-$events = {
-    running: false
-};
+$events = {};
 
 $gameLog = [];
 
@@ -952,28 +971,43 @@ $staticNPC = {};
 
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="S0000D-Data" tags="nobr" position="525,1100" size="100,100">&lt;&lt;script&gt;&gt;
 setup.event = {
-	&quot;scene1&quot;: {
+	&quot;Start&quot;: {
 		txt: &quot;Scene1 Text dialog&quot;,
         choice: [
 			{ txt: &quot;scene2 choice&quot;, next: &quot;scene2&quot; },
-			{ txt: &quot;scenne3 choice&quot;, next: &quot;scene3&quot; },
+			{ txt: &quot;Scene: Damage PC&quot;, next: &quot;Damage&quot; },
+			{ txt: &quot;Scene: Grant green aple x1&quot;, next: &quot;Grant&quot;},
 			{ txt: &quot;end scene&quot;, next: &quot;end&quot; },
 		],
 	},
-	&quot;scene2&quot;: {
-		txt: &quot;Scene2 Text dialog&quot;,
+	&quot;Damage&quot;: {
+		txt: &quot;You damage yourself&quot;,
+		action: function(entity){
+			setup.entityHarm(entity, 5);
+		},
 		choice: [
-			{ txt: &quot;scene3 choice&quot;, next: &quot;scene3&quot; },
-			{ txt: &quot;scene2 choice&quot;, next: &quot;scene2&quot; },
-			{ txt: &quot;scene1 choice&quot;, next: &quot;scene1&quot; }
+			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
+			{ txt: &quot;End test scene&quot;, next: &quot;scene1&quot; }
 		],
 	},
 	&quot;scene3&quot;: {
-		txt: &quot;Scene3 Text dialog&quot;,
+		txt: &quot;You&#39;ve received a trait! Wow that&#39;s amazing&quot;,
+		action: function(entity){
+			setup.AddTrait(entity, 1001);
+		},
 		choice: [
-			{ txt: &quot;scene1 choice&quot;, next: &quot;scene1&quot; },
-			{ txt: &quot;scene2 choice&quot;, next: &quot;scene2&quot; },
-			{ txt: &quot;end scene&quot;, next: &quot;end&quot; },
+			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
+			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
+		],
+	},
+	&quot;Grant&quot;: {
+		txt: &quot;You&#39;ve received a single stick!&quot;,
+		action: function(entity){
+			setup.grantItem(entity, 1001, 1);
+		},
+		choice: [
+			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
+			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
 		],
 	},
 };
@@ -1000,8 +1034,6 @@ setup.event = {
 setup.startScene = function() {
     if(setup.event === undefined) return;
 
-    State.variables.events.running = true;
-
     console.log(&quot;Started event!&quot;);
     const temp = State.temporary;
 
@@ -1020,7 +1052,10 @@ setup.startScene = function() {
 
     let sceneChoices = currentScene.choice;
     for(let i = 0; i &lt; sceneChoices.length; i++){
-        $(&quot;#choices-container&quot;).wiki(`&lt;&lt;button &quot;${sceneChoices[i].txt}&quot;&gt;&gt;&lt;&lt;run setup.continueScene(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;br&gt;`);
+        $(&quot;#choices-container&quot;).wiki(`
+            &lt;&lt;button &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
+            &lt;&lt;run setup.continueScene(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;
+            &lt;&lt;/button&gt;&gt;&lt;br&gt;`);
     }
 }
 
@@ -1029,18 +1064,14 @@ setup.continueScene = function(sceneKey) {
 
     if(sceneKey === &quot;end&quot;) {
         $.wiki(&quot;&lt;&lt;goback&gt;&gt;&quot;);
-        State.variables.events.running = false;
         return;
     }
 
-    const temp = State.temporary;
-
-    if(!temp.sceneData.includes(sceneKey)) return;
+    if(!State.temporary.sceneData.includes(sceneKey)) return;
 
     let currentScene = setup.event[sceneKey];
 
     $(&quot;#choices-container&quot;).empty();
-
     $(&quot;#scene-container&quot;).wiki(&quot;&lt;br&gt;&lt;br&gt;&quot;);
 
     if(currentScene.img !== undefined)
@@ -1049,8 +1080,16 @@ setup.continueScene = function(sceneKey) {
     $(&quot;#scene-container&quot;).wiki(currentScene.txt + &quot;&lt;br&gt;&quot;);
 
     let sceneChoices = currentScene.choice;
+
     for(let i = 0; i &lt; sceneChoices.length; i++){
-        $(&quot;#choices-container&quot;).wiki(`&lt;&lt;button &quot;${sceneChoices[i].txt}&quot;&gt;&gt;&lt;&lt;run setup.continueScene(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;br&gt;`);
+        $(&quot;#choices-container&quot;).wiki(`
+            &lt;&lt;button &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
+            &lt;&lt;run setup.continueScene(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;
+            &lt;&lt;/button&gt;&gt;&lt;br&gt;`);
+    }
+
+    if(typeof setup.event[sceneKey].action === &quot;function&quot;){
+        setup.event[sceneKey].action(State.variables.pc);
     }
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="28" name="Game-Reset" tags="dialog" position="1250,450" size="200,100">!!! Reset Game
@@ -1111,6 +1150,7 @@ setup.CalculateStat = function(entity) {
     entity.power = totalStr + (totalAgi / 4) + (totalCon / 4);
 
     setup.RenderNavigation();
+    setup.log.info(`Calculates stat for ${entity.name}`);
 };
 
 setup.totalStat = function(stat, excludedIndex = []) {
@@ -1137,12 +1177,12 @@ setup.AddTrait = function(entity, traitID){
     let traitType = setup.trait[traitID].type.toLowerCase();
 
     if(entity.trait[traitType].includes(traitID)){
-        console.log(`Warning : ${entity.name} already has ${setup.trait[traitID].name} trait!`);
+        setup.log.warning(`${entity.name} already has [${setup.trait[traitID].name}] trait!`);
         return;
     }
 
     entity.trait[traitType].push(traitID);
-    console.log(`Added ${setup.trait[traitID].name} trait to ${entity.name}`);
+    setup.log.success(`Added [${setup.trait[traitID].name}] trait to ${entity.name}`);
 
     let modifiedStats = Object.keys(setup.trait[traitID].modifier);
     for(const stat of modifiedStats){
@@ -1163,7 +1203,7 @@ setup.RemoveTrait = function(entity, traitID){
     let traitType = setup.trait[traitID].type.toLowerCase();
 
     if(!entity.trait[traitType].includes(traitID)){
-        console.log(`Warning : ${entity.name} doesn&#39;t have ${setup.trait[traitID].name} trait!`);
+        setup.log.warning(`${entity.name} doesn&#39;t have [${setup.trait[traitID].name}] trait!`);
         return;
     }
 
@@ -1182,7 +1222,7 @@ setup.RemoveTrait = function(entity, traitID){
         }
     }
 
-    console.log(`Removed ${setup.trait[traitID].name} trait from ${entity.name}`);
+    setup.log.success(`Removed [${setup.trait[traitID].name}] trait from ${entity.name}`);
     setup.CalculateStat(entity);
 };
 
@@ -1190,11 +1230,11 @@ setup.AddTitle = function(entity, titleID) {
     if(setup.title[titleID] === undefined || entity === undefined) return;
 
     if(entity.title.includes(titleID)){
-        console.log(`Warning : ${entity.name} already have ${setup.title[titleID].name} title!`);
+        setup.log.warning(`${entity.name} already have [${setup.title[titleID].name}] title!`);
         return;
     }
     entity.title.push(titleID);
-    console.log(`Added ${setup.title[titleID].name} title to ${entity.name}`);
+    setup.log.success(`Added [${setup.title[titleID].name}] title to ${entity.name}`);
 
     let modifiedStats = Object.keys(setup.title[titleID].modifier);
     for(const stat of modifiedStats){
@@ -1213,7 +1253,7 @@ setup.RemoveTitle = function(entity, titleID) {
     if(setup.title[titleID] === undefined || entity === undefined) return;
 
     if(!entity.title.includes(titleID)){
-        console.log(`Warning : ${entity.name} doesnt have ${setup.title[titleID].name} title!`);
+        setup.log.warning(`${entity.name} doesnt have ${setup.title[titleID].name} title!`);
         return;
     }
 
@@ -1232,7 +1272,7 @@ setup.RemoveTitle = function(entity, titleID) {
         }
     }
 
-    console.log(`Removed ${setup.title[titleID].name} title from ${entity.name}`);
+    setup.log.success(`Removed ${setup.title[titleID].name} title from ${entity.name}`);
     setup.CalculateStat(entity);
 }
 
@@ -1256,6 +1296,8 @@ Macro.add(&quot;ToggleStat&quot;, {
 
 setup.NatRegen = function(entity, tick) {
     if(setup.validateEntity(entity)) return;
+
+    if(entity.body.energy &lt;= 0) setup.log.info(`${entity.name} doesn&#39;t have enough energy to regenerate naturally`);
 
     let maxHPS = setup.totalStat(entity.hps, [0]);
 
@@ -1552,7 +1594,7 @@ setup.grantItem = function(entity, itemID, amount) {
 
     function IsInventoryFull(){
         if(entity.inventory.length &gt;= entity.inventoryCap){
-            console.log(`${entity.name} doesn&#39;t have enough storage!`)
+            setup.log.info(`${entity.name} doesn&#39;t have enough storage!`);
             return true;
         }
     }
@@ -1566,6 +1608,7 @@ setup.grantItem = function(entity, itemID, amount) {
             amount: Math.min(item.stackLimit, amount)
         });
 
+        setup.log.info(`Gave ${Math.min(item.stackLimit, amount)}x ${setup.item[itemID].name} to ${entity.name}`);
         amount -= Math.min(item.stackLimit, amount);
 
         return false;
@@ -1582,6 +1625,7 @@ setup.grantItem = function(entity, itemID, amount) {
                 let capAmoumt = Math.min(item.stackLimit - currentStack, amount);
 
                 entity.inventory[entity.inventory.length - 1].amount += capAmoumt;
+                setup.log.info(`Gave ${Math.min(item.stackLimit, amount)}x ${setup.item[itemID].name} to ${entity.name}`);
                 amount -= capAmoumt;
 
                 if (amount &gt; 0) {
@@ -1595,6 +1639,7 @@ setup.grantItem = function(entity, itemID, amount) {
     } else {
         for(let i = 0; i &lt; amount; i++){
             if(IsInventoryFull()) return;
+            setup.log.info(`Gave 1x ${setup.item[itemID].name} to ${entity.name}`);
             switch(item.category){
                 case &quot;Weapon&quot;:
                     entity.inventory.push({
