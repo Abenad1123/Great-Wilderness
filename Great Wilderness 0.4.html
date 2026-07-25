@@ -320,7 +320,7 @@ setup.getRoll = function(entity, min, max, goal = "Higher") {
 
 setup.validateStat = function(entity){
     
-}</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="100,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
+}</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="100,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
 	&lt;&lt;include &quot;Debug-PC-Data&quot;&gt;&gt;
     &lt;&lt;run setup.CalculateStat($pc)&gt;&gt;
     &lt;&lt;play &quot;Untitled Passage&quot;&gt;&gt;
@@ -331,10 +331,6 @@ setup.validateStat = function(entity){
 &lt;&lt;if $pc !== undefined&gt;&gt;
 &lt;&lt;button &quot;Battle&quot;&gt;&gt;
 	&lt;&lt;play &quot;Debug-Battle&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;
-
-&lt;&lt;button &quot;Area&quot;&gt;&gt;
-	&lt;&lt;play &quot;Debug-Area&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;
 
 &lt;&lt;button &quot;Scene&quot;&gt;&gt;
@@ -419,8 +415,19 @@ setup.validateStat = function(entity){
 &lt;&lt;/button&gt;&gt;
 
 &lt;br&gt;&lt;br&gt;
-&lt;&lt;button &quot;Add Strong bones trait&quot;&gt;&gt;
+&lt;&lt;button &quot;Add Thick bones trait&quot;&gt;&gt;
 	&lt;&lt;run setup.AddTrait($pc, 1001)&gt;&gt;
+&lt;&lt;/button&gt;&gt;
+&lt;&lt;button &quot;Remove Thick bones trait&quot;&gt;&gt;
+	&lt;&lt;run setup.RemoveTrait($pc, 1001)&gt;&gt;
+&lt;&lt;/button&gt;&gt;
+
+&lt;br&gt;&lt;br&gt;
+&lt;&lt;button &quot;Add Sword Maste title&quot;&gt;&gt;
+	&lt;&lt;run setup.AddTitle($pc, 1001)&gt;&gt;
+&lt;&lt;/button&gt;&gt;
+&lt;&lt;button &quot;Remove Sword Maste title&quot;&gt;&gt;
+	&lt;&lt;run setup.RemoveTitle($pc, 1001)&gt;&gt;
 &lt;&lt;/button&gt;&gt;
 
 &lt;&lt;/if&gt;&gt;
@@ -495,9 +502,9 @@ setup.validateStat = function(entity){
 &lt;&lt;include &quot;Stat--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Inventory--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;NPC-Gen--Logic&quot;&gt;&gt;
+&lt;&lt;include &quot;Area--Logic&quot;&gt;&gt;
 
-
-&lt;&lt;set $areaHistory = []&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo.png&quot; id=&quot;displayTitle-logo&quot;&gt;
+&lt;&lt;set $passageHistory = []&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo.png&quot; id=&quot;displayTitle-logo&quot;&gt;
 &lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 1.0 Alpha&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,850" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
 &lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="Item-Data" tags="data" position="1000,25" size="200,100">&lt;&lt;script&gt;&gt;
@@ -571,19 +578,55 @@ setup.race = {
     }
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="8" name="Title-Data" tags="data" position="1250,150" size="200,100">&lt;&lt;script&gt;&gt;
+setup.title = {
+    1001: {
+        name: &quot;Sword Master&quot;,
+        description: &quot;&quot;,
+        img: &quot;&quot;,
+        modifier: {
+            str: 5,
+            con: 5,
+            int: 5,
+            agi: 5,
+            per: 5
+        }
+    }
+}
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="9" name="Status-Data" tags="data" position="1750,150" size="200,100">&lt;&lt;script&gt;&gt;
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="10" name="Trait-Data" tags="data" position="1500,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.trait = {
     1001: {
         name: &quot;Thick Bones&quot;,
-        type: &quot;Acquired&quot;,
+        type: &quot;Innate&quot;,
+        rank: &quot;Common&quot;,
         description: &quot;&quot;,
         img: &quot;&quot;,
-        effect: {
+        modifier: {
             str: 1,
             con: 5
         }
-    }
+    },
+    1002: {
+        name: &quot;Sharp Eyes&quot;,
+        type: &quot;Innate&quot;,
+        rank: &quot;Common&quot;,
+        description: &quot;&quot;,
+        img: &quot;&quot;,
+        modifier: {
+            per: 5,
+        }
+    },
+    1002: {
+        name: &quot;Nible Feet&quot;,
+        type: &quot;Innate&quot;,
+        rank: &quot;Common&quot;,
+        description: &quot;&quot;,
+        img: &quot;&quot;,
+        modifier: {
+            agi: 3,
+            per: 3
+        }
+    },
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="11" name="Start-Loading-Screen" tags="" position="2025,925" size="200,100"></tw-passagedata><tw-passagedata pid="12" name="StoryCaption--Logic" tags="logic" position="25,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.updateBars = function() {
@@ -605,9 +648,7 @@ setup.updateBars = function() {
 $(document).on(&#39;:passagerender&#39;, function() {
   setTimeout(setup.updateBars, 0);
 });
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="13" name="Debug-Area" tags="" position="25,975" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
-  &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="Debug-Scene" tags="" position="275,850" size="200,100">&lt;&lt;include &quot;S0000D-Data&quot;&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="13" name="Debug-Scene" tags="" position="275,850" size="200,100">&lt;&lt;include &quot;S0000D-Data&quot;&gt;&gt;
 
 &lt;div id=&quot;scene-container&quot;&gt;&lt;/div&gt;
 
@@ -621,7 +662,7 @@ $(document).on(&#39;:passagerender&#39;, function() {
 &lt;&lt;if $events.running == false&gt;&gt;
   &lt;&lt;run setup.startScene()&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="15" name="Debug-Shop" tags="" position="25,1100" size="200,100">&lt;&lt;if $shopGenData[101] === undefined&gt;&gt;
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="14" name="Debug-Shop" tags="" position="25,975" size="200,100">&lt;&lt;if $shopGenData[101] === undefined&gt;&gt;
 	&lt;&lt;run
         $shopGenData[101] = {
         	genDate: $time.day,
@@ -647,23 +688,27 @@ Stock : &lt;&lt;= $items[_i][1]&gt;&gt;
 
 &lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="Debug-Shop-Data" tags="" position="25,1275" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="15" name="Debug-Shop-Data" tags="" position="25,1100" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="PassageHeader" tags="nobr" position="25,275" size="200,100">&lt;&lt;if !tags().includes(&quot;NoBacktrack&quot;)&gt;&gt;
-	&lt;&lt;if $areaHistory[$areaHistory.length - 1] != passage()&gt;&gt;
-		&lt;&lt;run $areaHistory.push(passage())&gt;&gt;
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="PassageHeader" tags="nobr" position="25,275" size="200,100">&lt;&lt;if !tags().includes(&quot;NoBacktrack&quot;)&gt;&gt;
+	&lt;&lt;if $passageHistory[$passageHistory.length - 1] != passage()&gt;&gt;
+		&lt;&lt;run $passageHistory.push(passage())&gt;&gt;
     &lt;&lt;/if&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 
-Passge history : &lt;&lt;= $areaHistory&gt;&gt;&lt;br&gt;</tw-passagedata><tw-passagedata pid="18" name="Widget-General" tags="" position="2875,25" size="200,100">&lt;&lt;widget &quot;goback&quot;&gt;&gt;
-	&lt;&lt;if $areaHistory.length &lt;= 1&gt;&gt;
+Passge history : &lt;&lt;= $passageHistory&gt;&gt;&lt;br&gt;
+
+&lt;&lt;done&gt;&gt;
+	&lt;&lt;run setup.checkArea()&gt;&gt;
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="17" name="Widget-General" tags="" position="3075,25" size="200,100">&lt;&lt;widget &quot;goback&quot;&gt;&gt;
+	&lt;&lt;if $passageHistory.length &lt;= 1&gt;&gt;
     	&lt;&lt;run console.log(&quot;Cannot go back, there&#39;s nothing to go back to&quot;)&gt;&gt;
     &lt;&lt;else&gt;&gt;
-    	&lt;&lt;run $areaHistory.pop()&gt;&gt;
-        &lt;&lt;set _targetArea = $areaHistory[$areaHistory.length - 1]&gt;&gt;
+    	&lt;&lt;run $passageHistory.pop()&gt;&gt;
+        &lt;&lt;set _targetArea = $passageHistory[$passageHistory.length - 1]&gt;&gt;
         &lt;&lt;play _targetArea&gt;&gt;
     &lt;&lt;/if&gt;&gt;
-&lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="Shop--Logic" tags="logic" position="2300,25" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/widget&gt;&gt;</tw-passagedata><tw-passagedata pid="18" name="Shop--Logic" tags="logic" position="2300,25" size="200,100">&lt;&lt;script&gt;&gt;
 setup.loaditems = function(shopID) {
     const shopObj = setup.shopData[shopID].items;
 
@@ -680,7 +725,7 @@ setup.loaditems = function(shopID) {
 
     return result;
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="Shop-Data" tags="data" position="1250,25" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="19" name="Shop-Data" tags="data" position="1250,25" size="200,100">&lt;&lt;script&gt;&gt;
 // Version 0.4 InDev
 setup.shopData = {
     101: {
@@ -704,7 +749,7 @@ setup.shopData = {
         }
     }
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="Nav-Time" tags="nobr panel" position="1000,450" size="200,100">&lt;div id=&quot;ui-nav-time&quot; class=&quot;no-select&quot;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="20" name="Nav-Time" tags="nobr panel" position="1000,450" size="200,100">&lt;div id=&quot;ui-nav-time&quot; class=&quot;no-select&quot;&gt;
 Minute : &lt;&lt;= $time.minute&gt;&gt;
 &lt;br&gt;
 Hour : &lt;&lt;= $time.hour&gt;&gt;
@@ -712,7 +757,7 @@ Hour : &lt;&lt;= $time.hour&gt;&gt;
 Day : &lt;&lt;= $time.day&gt;&gt;
 &lt;br&gt;
 Year : &lt;&lt;= $time.year&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="22" name="Debug-PC-Data" tags="" position="275,1275" size="200,100">&lt;&lt;run
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="21" name="Debug-PC-Data" tags="" position="275,1100" size="200,100">&lt;&lt;run
 $pc = {
     name: &quot;John Doe&quot;,
     race: 101,
@@ -728,8 +773,8 @@ $pc = {
     // DEAD OR ALIVE
     state: &quot;alive&quot;,
 
-    title: {},
-    status: {},
+    title: [],
+    status: [],
 
     gear: {
         head: null,
@@ -890,7 +935,8 @@ $world = {
         hour: 0,
         day: 0,
         year: 0
-    }
+    },
+    area: {}
 }
 
 $events = {
@@ -902,9 +948,9 @@ $gameLog = [];
 $shopGenData = {};
 
 $staticNPC = {};
-&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="S00001-Data" tags="" position="2075,450" size="100,100">&lt;&lt;script&gt;&gt;
+&gt;&gt;</tw-passagedata><tw-passagedata pid="22" name="S00001-Data" tags="" position="2300,450" size="100,100">&lt;&lt;script&gt;&gt;
 
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="S0000D-Data" tags="nobr" position="525,1275" size="100,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="S0000D-Data" tags="nobr" position="525,1100" size="100,100">&lt;&lt;script&gt;&gt;
 setup.event = {
 	&quot;scene1&quot;: {
 		txt: &quot;Scene1 Text dialog&quot;,
@@ -931,7 +977,7 @@ setup.event = {
 		],
 	},
 };
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="25" name="Debug-Area1" tags="" position="150,1425" size="100,100">&lt;&lt;button &quot;Area2&quot;&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="24" name="Debug-Area1" tags="area" position="975,1450" size="100,100">&lt;&lt;button &quot;Area2&quot;&gt;&gt;
 	&lt;&lt;play &quot;Debug-Area2&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;
 
@@ -941,11 +987,16 @@ setup.event = {
 
 &lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="26" name="Debug-Area2" tags="" position="275,1425" size="100,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
+&lt;&lt;/button&gt;&gt;
+
+&lt;!-- 
+[[Debug-Area2]] 
+[[Debug-Area3]] 
+--&gt;</tw-passagedata><tw-passagedata pid="25" name="Debug-Area2" tags="area" position="1100,1575" size="100,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="27" name="Debug-Area3" tags="" position="25,1425" size="100,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="26" name="Debug-Area3" tags="area" position="850,1575" size="100,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="28" name="Scene--Logic" tags="logic" position="2300,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="27" name="Scene--Logic" tags="logic" position="2300,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.startScene = function() {
     if(setup.event === undefined) return;
 
@@ -1002,7 +1053,7 @@ setup.continueScene = function(sceneKey) {
         $(&quot;#choices-container&quot;).wiki(`&lt;&lt;button &quot;${sceneChoices[i].txt}&quot;&gt;&gt;&lt;&lt;run setup.continueScene(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;&lt;&lt;/button&gt;&gt;&lt;br&gt;`);
     }
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="29" name="Game-Reset" tags="dialog" position="1250,450" size="200,100">!!! Reset Game
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="28" name="Game-Reset" tags="dialog" position="1250,450" size="200,100">!!! Reset Game
 
 Do you really want to restart?
 
@@ -1014,14 +1065,14 @@ Do you really want to restart?
 &lt;&lt;button &quot;No&quot;&gt;&gt;
 	&lt;&lt;run Dialog.close();&gt;&gt;
 &lt;&lt;/button&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="Nav-Event" tags="nobr panel" position="1000,575" size="200,100">&lt;&lt;if $gameLog.length &gt; 0&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="29" name="Nav-Event" tags="nobr panel" position="1000,575" size="200,100">&lt;&lt;if $gameLog.length &gt; 0&gt;&gt;
 &lt;&lt;for _i = $gameLog.length - 1; _i &gt;= 0; _i--&gt;&gt;
 	&lt;&lt;= $gameLog[_i]&gt;&gt;
     &lt;br&gt;
 &lt;&lt;/for&gt;&gt;
-&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="31" name="Nav-Stat" tags="nobr panel" position="1000,700" size="200,100">Health : &lt;&lt;= $pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= $pc.hps[1].toFixed(2)&gt;&gt;
+&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="30" name="Nav-Stat" tags="nobr panel" position="1000,700" size="200,100">Health : &lt;&lt;= $pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= $pc.hps[1].toFixed(2)&gt;&gt;
 &lt;br&gt;
-Stamina : &lt;&lt;= $pc.sta[0].toFixed(2)&gt;&gt;/ &lt;&lt;= $pc.sta[1].toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="32" name="Stat--Logic" tags="logic" position="2300,275" size="200,100">&lt;&lt;script&gt;&gt;
+Stamina : &lt;&lt;= $pc.sta[0].toFixed(2)&gt;&gt;/ &lt;&lt;= $pc.sta[1].toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="31" name="Stat--Logic" tags="logic" position="2300,275" size="200,100">&lt;&lt;script&gt;&gt;
 // For entity data validation
 setup.dataIndex = {
     info: [&quot;name&quot;, &quot;race&quot;],
@@ -1093,12 +1144,13 @@ setup.AddTrait = function(entity, traitID){
     entity.trait[traitType].push(traitID);
     console.log(`Added ${setup.trait[traitID].name} trait to ${entity.name}`);
 
-    let effect = Object.keys(setup.trait[traitID].effect);
-
-    for(let i = 0; i &lt; effect.length; i++){
-        entity[effect[i]][1].push({
-            traitID: traitID,
-            value: setup.trait[traitID].effect[effect[i]]
+    let modifiedStats = Object.keys(setup.trait[traitID].modifier);
+    for(const stat of modifiedStats){
+        if(!entity[stat]) return;
+        entity[stat][1].push({
+            type: &quot;Trait&quot;,
+            id: traitID,
+            value: setup.trait[traitID].modifier[stat]
         });
     }
 
@@ -1108,8 +1160,81 @@ setup.AddTrait = function(entity, traitID){
 setup.RemoveTrait = function(entity, traitID){
     if(setup.trait[traitID] === undefined || entity === undefined) return;
 
+    let traitType = setup.trait[traitID].type.toLowerCase();
+
+    if(!entity.trait[traitType].includes(traitID)){
+        console.log(`Warning : ${entity.name} doesn&#39;t have ${setup.trait[traitID].name} trait!`);
+        return;
+    }
+
+    let index = entity.trait[traitType].indexOf(traitID);
+    if(index &gt; -1){
+        entity.trait[traitType].splice(index, 1);
+    }
+
+    let modifiedStats = Object.keys(setup.trait[traitID].modifier);
+    for(const stat of modifiedStats){
+        const statModifierList = entity[stat][1];
+        const statIndex = statModifierList.findIndex(obj =&gt; obj.id === traitID &amp;&amp; obj.type === &quot;Trait&quot;);
+
+        if (statIndex &gt; -1) {
+            statModifierList.splice(statIndex, 1);
+        }
+    }
+
+    console.log(`Removed ${setup.trait[traitID].name} trait from ${entity.name}`);
     setup.CalculateStat(entity);
 };
+
+setup.AddTitle = function(entity, titleID) {
+    if(setup.title[titleID] === undefined || entity === undefined) return;
+
+    if(entity.title.includes(titleID)){
+        console.log(`Warning : ${entity.name} already have ${setup.title[titleID].name} title!`);
+        return;
+    }
+    entity.title.push(titleID);
+    console.log(`Added ${setup.title[titleID].name} title to ${entity.name}`);
+
+    let modifiedStats = Object.keys(setup.title[titleID].modifier);
+    for(const stat of modifiedStats){
+        if(!entity[stat]) return;
+        entity[stat][1].push({
+            type: &quot;Title&quot;,
+            id: titleID,
+            value: setup.title[titleID].modifier[stat]
+        });
+    }
+
+    setup.CalculateStat(entity);
+}
+
+setup.RemoveTitle = function(entity, titleID) {
+    if(setup.title[titleID] === undefined || entity === undefined) return;
+
+    if(!entity.title.includes(titleID)){
+        console.log(`Warning : ${entity.name} doesnt have ${setup.title[titleID].name} title!`);
+        return;
+    }
+
+    let index = entity.title.indexOf(titleID);
+    if(index &gt; -1){
+        entity.title.splice(index, 1);
+    }
+
+    let modifiedStats = Object.keys(setup.title[titleID].modifier);
+    for(const stat of modifiedStats){
+        const statModifierList = entity[stat][1];
+        const statIndex = statModifierList.findIndex(obj =&gt; obj.id === titleID &amp;&amp; obj.type === &quot;Title&quot;);
+
+        if (statIndex &gt; -1) {
+            statModifierList.splice(statIndex, 1);
+        }
+    }
+
+    console.log(`Removed ${setup.title[titleID].name} title from ${entity.name}`);
+    setup.CalculateStat(entity);
+}
 
 setup.validateEntity = function(entity) {
     for(let i = 0; i &lt; setup.dataIndex.stat.length; i++){
@@ -1159,7 +1284,7 @@ setup.NatRegen = function(entity, tick) {
         entity.sta[0] = Math.min(entity.sta[0] + STARegenValue, maxSTA);
     }
 };
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="33" name="Character" tags="dialog" position="1250,575" size="200,100">&lt;&lt;run
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="32" name="Character" tags="dialog" position="1250,575" size="200,100">&lt;&lt;run
 _totalStat = {
     str: setup.totalStat($pc.str),
     con: setup.totalStat($pc.con),
@@ -1181,9 +1306,25 @@ Age : &lt;&lt;= $pc.age.year&gt;&gt;
 Lifespan : &lt;&lt;= $pc.lifespan&gt;&gt;
 State : &lt;&lt;= $pc.state&gt;&gt;
 
-Trait : &lt;&lt;= $pc.trait&gt;&gt;
-Title : &lt;&lt;= $pc.title&gt;&gt;
-Status : &lt;&lt;= $pc.status&gt;&gt;
+Trait : 
+Innate: 
+&lt;&lt;for _i = 0; _i &lt; $pc.trait.innate.length; _i++&gt;&gt;
+[&lt;&lt;= setup.trait[$pc.trait.innate[_i]].name&gt;&gt;]
+&lt;&lt;/for&gt;&gt;
+Acquired: 
+&lt;&lt;for _i = 0; _i &lt; $pc.trait.acquired.length; _i++&gt;&gt;
+[&lt;&lt;= setup.trait[$pc.trait.acquired[_i]].name&gt;&gt;]
+&lt;&lt;/for&gt;&gt;
+Temporary: 
+&lt;&lt;for _i = 0; _i &lt; $pc.trait.temporary.length; _i++&gt;&gt;
+[&lt;&lt;= setup.trait[$pc.trait.temporary[_i]].name&gt;&gt;]
+&lt;&lt;/for&gt;&gt;
+
+Title : 
+&lt;&lt;for _i = 0; _i &lt; $pc.title.length; _i++&gt;&gt;
+[&lt;&lt;= setup.title[$pc.title[_i]].name&gt;&gt;]
+&lt;&lt;/for&gt;&gt;
+Status : 
 
 Health : &lt;&lt;= $pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= $pc.hps[1].toFixed(2)&gt;&gt;
 Stamina : &lt;&lt;= $pc.sta[0].toFixed(2)&gt;&gt;/ &lt;&lt;= $pc.sta[1].toFixed(2)&gt;&gt;
@@ -1218,7 +1359,7 @@ Left Accessory : &lt;&lt;= $pc.gear.lAcc&gt;&gt;
 
 Active : &lt;&lt;= $pc.skill.active&gt;&gt;
 Passive : &lt;&lt;= $pc.skill.passive&gt;&gt;
-Innate : &lt;&lt;= $pc.skill.innate&gt;&gt;</tw-passagedata><tw-passagedata pid="34" name="Inventory" tags="dialog nobr" position="1250,700" size="200,100">&lt;&lt;for _i = 0; _i &lt; $pc.inventory.length; _i++&gt;&gt;
+Innate : &lt;&lt;= $pc.skill.innate&gt;&gt;</tw-passagedata><tw-passagedata pid="33" name="Inventory" tags="dialog nobr" position="1250,700" size="200,100">&lt;&lt;for _i = 0; _i &lt; $pc.inventory.length; _i++&gt;&gt;
 	&lt;&lt;if setup.item[$pc.inventory[_i].itemID].stackLimit === 1&gt;&gt;
     	Name : &lt;&lt;= setup.item[$pc.inventory[_i].itemID].name&gt;&gt;&lt;br&gt;
         Durability : &lt;&lt;= $pc.inventory[_i].stat.durability&gt;&gt; / &lt;&lt;= setup.item[$pc.inventory[_i].itemID].stat.durability&gt;&gt;&lt;br&gt;
@@ -1228,7 +1369,7 @@ Innate : &lt;&lt;= $pc.skill.innate&gt;&gt;</tw-passagedata><tw-passagedata pid=
         Amount : &lt;&lt;= $pc.inventory[_i].amount&gt;&gt;&lt;br&gt;
     &lt;&lt;/if&gt;&gt;
     &lt;br&gt;&lt;br&gt;
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="35" name="Static-NPC-Data" tags="data" position="1000,275" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="34" name="Static-NPC-Data" tags="data" position="1000,275" size="200,100">&lt;&lt;script&gt;&gt;
 setup.staticNPC = {
     &quot;S101&quot;: {
         name: &quot;Celeste Brown&quot;,
@@ -1357,9 +1498,9 @@ setup.staticNPCDat = {
         loc: &quot;&quot;
     },
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="36" name="PRand-NPC-Data" tags="data" position="1250,275" size="200,100">&lt;&lt;script&gt;&gt;
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="37" name="HRand-NPC-Data" tags="data" position="1500,275" size="200,100">&lt;&lt;script&gt;&gt;
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="38" name="Game-Death" tags="dialog" position="1750,450" size="200,100">!!! You are dead
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="35" name="PRand-NPC-Data" tags="data" position="1250,275" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="36" name="HRand-NPC-Data" tags="data" position="1500,275" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="37" name="Game-Death" tags="dialog" position="1750,450" size="200,100">!!! You are dead
 
 Want to start over again?
 
@@ -1371,10 +1512,10 @@ Want to start over again?
 &lt;&lt;button &quot;No&quot;&gt;&gt;
 	&lt;&lt;run Engine.restart()&gt;&gt;
 &lt;&lt;/button&gt;&gt;
-&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="39" name="Action-Sleep" tags="" position="1000,850" size="200,100">How long do you want to sleep?
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="38" name="Action-Sleep" tags="" position="1000,850" size="200,100">How long do you want to sleep?
 
 &lt;&lt;link &quot;Sleep for 1 hour&quot;&gt;&gt;
-&lt;&lt;/link&gt;&gt;</tw-passagedata><tw-passagedata pid="40" name="Action--Logic" tags="logic" position="2525,25" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/link&gt;&gt;</tw-passagedata><tw-passagedata pid="39" name="Action--Logic" tags="logic" position="2525,25" size="200,100">&lt;&lt;script&gt;&gt;
 setup.entitySleep = function(entity, tick) {
     if(!entity || !entity.age) return; 
     tick = tick &lt;= 0 ? 0 : tick;
@@ -1400,7 +1541,7 @@ Macro.add(&quot;Harm&quot;, {
         setup.entityHarm(entity, damage);
     }
 });
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="41" name="Inventory--Logic" tags="logic" position="2525,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="40" name="Inventory--Logic" tags="logic" position="2525,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.grantItem = function(entity, itemID, amount) {
     const item = setup.item[itemID];
 
@@ -1488,8 +1629,17 @@ setup.moveItem = function(sourceEntity, targetEntity, itemID, amount) {
 setup.equipItem = function(entity, itemID) {
     if(entity.inventory[itemID] === undefined) return;
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="42" name="NPC-Gen--Logic" tags="logic" position="2525,275" size="200,100">&lt;&lt;script&gt;&gt;
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="43" name="Settings" tags="dialog" position="1500,450" size="200,100"></tw-passagedata><tw-passagedata pid="44" name="Skill-Data" tags="data" position="2000,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="41" name="NPC-Gen--Logic" tags="logic" position="2525,275" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="42" name="Settings" tags="dialog" position="1500,450" size="200,100"></tw-passagedata><tw-passagedata pid="43" name="Skill-Data" tags="data" position="2000,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="Area--Logic" tags="logic" position="2750,25" size="200,100">&lt;&lt;script&gt;&gt;
+setup.checkArea = function(area) {
+    if(tags(passage()).includes(&quot;area&quot;)){
+        if(State.variables.world.area[passage()] === undefined){
+            State.variables.world.area[passage()] = true;
+            console.log(`Explored ${passage()}!`);
+        }
+    }
+}
 &lt;&lt;/script&gt;&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
