@@ -1,0 +1,162 @@
+.txt-wiggle {
+    display: inline-block;
+    animation: txt-wiggle 0.7s ease-in-out infinite;
+}
+
+.txt-bold {
+	 font-family: Roboto-B; 
+}
+
+.txt-italic {
+	font-family: Roboto-I;
+}
+
+/* ============================
+   WIGGLE
+   ============================ */
+
+@keyframes txt-wiggle {
+    0% {
+        transform: rotate(0deg) translateX(0);
+    }
+
+    20% {
+        transform: rotate(-2deg) translateX(-1px);
+    }
+
+    40% {
+        transform: rotate(2deg) translateX(1px);
+    }
+
+    60% {
+        transform: rotate(-1deg) translateX(-1px);
+    }
+
+    80% {
+        transform: rotate(1deg) translateX(1px);
+    }
+
+    100% {
+        transform: rotate(0deg) translateX(0);
+    }
+}
+
+/* ============================
+   SHAKE
+   ============================ */
+
+.txt-shake {
+    display: inline-block;
+    animation: txt-shake 0.12s infinite;
+}
+
+@keyframes txt-shake {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(-1px, 1px); }
+    50%  { transform: translate(1px, -1px); }
+    75%  { transform: translate(-1px, -1px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* ============================
+   WAVE
+   ============================ */
+
+.txt-wave {
+    display: inline-block;
+    animation: txt-wave 1.6s ease-in-out infinite;
+}
+
+@keyframes txt-wave {
+    0%,100% { transform: translateY(0); }
+    25%     { transform: translateY(-3px); }
+    75%     { transform: translateY(3px); }
+}
+
+/* ============================
+   GLOW
+   ============================ */
+
+.txt-glow {
+    animation: txt-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes txt-glow {
+    from {
+        text-shadow: 0 0 2px #fff;
+    }
+    to {
+        text-shadow:
+            0 0 5px #fff,
+            0 0 10px #fff,
+            0 0 15px #88ddff;
+    }
+}
+
+/* ============================
+   GLITCH
+   ============================ */
+
+.txt-glitch {
+    display: inline-block;
+    animation: txt-glitch 0.25s infinite;
+}
+
+@keyframes txt-glitch {
+    0%   { transform: translate(0,0); }
+    20%  { transform: translate(-1px,0); }
+    40%  { transform: translate(1px,0); }
+    60%  { transform: translate(-1px,1px); }
+    80%  { transform: translate(1px,-1px); }
+    100% { transform: translate(0,0); }
+}
+
+/* ============================
+   FADE
+   ============================ */
+
+.txt-fade {
+    animation: txt-fade 2s ease-in-out infinite;
+}
+
+@keyframes txt-fade {
+    0%,100% { opacity: 1; }
+    50%     { opacity: 0.35; }
+}
+
+/* ============================
+   PULSE
+   ============================ */
+
+.txt-pulse {
+    display: inline-block;
+    animation: txt-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes txt-pulse {
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+/* ============================
+   RAINBOW
+   ============================ */
+
+.txt-rainbow {
+    animation: txt-rainbow 4s linear infinite;
+}
+
+@keyframes txt-rainbow {
+    0%   { color: #ff4d4d; }
+    16%  { color: #ff9933; }
+    33%  { color: #ffff66; }
+    50%  { color: #66ff66; }
+    66%  { color: #66ccff; }
+    83%  { color: #cc66ff; }
+    100% { color: #ff4d4d; }
+}

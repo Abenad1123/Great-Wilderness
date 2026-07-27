@@ -199,14 +199,6 @@ span, a, p {
   	display: block;
   	opacity: 0;
     animation: reveal 0.5s forwards;
-}
-
-.txt-bold {
-	 font-family: Roboto-B; 
-}
-
-.txt-italic {
-	font-family: Roboto-I;
 }</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.controls = false;
 Config.history.maxStates = 1;
 Config.saves.maxSlotSaves = 5;
@@ -217,6 +209,7 @@ $(document).on(":storyready", function () {
     $("head").append('<link rel="stylesheet" href="css/battle_passage.css">');
     $("head").append('<link rel="stylesheet" href="css/location_style.css">');
   	$("head").append('<link rel="stylesheet" href="css/inventory_passage.css">');
+    $("head").append('<link rel="stylesheet" href="css/text-formatting.css">');
 });
 
 setup.action = {};
@@ -422,25 +415,28 @@ setup.start = {
 
 setup.text ={}
 setup.text.tag = {
-    b: {
-        class: "txt-bold"
-    },
-    i: {
-        class: "txt-italic"
-    }
+    b: {class: "txt-bold"},
+    i: {class: "txt-italic"},
+    wiggle: {class: "txt-wiggle"},
+    shake: {class: "txt-shake"},
+    wave: {class: "txt-wave"},
+    glow: {class: "txt-glow"},
+    glitch: {class: "txt-glitch"},
+    fade: {class: "txt-fade"},
+    pulse: {class: "txt-pulse"},
+    rainbow: {class: "txt-rainbow"}
 }
-
 
 setup.parseText = function(text) {
     let tags = Object.keys(setup.text.tag);
     let result = "";
 
     let delay = 0;
-    let lineList = text.match(/(.*)[a-z!?.]/g);
+    let lineList = text.match(/(.+)/g);
 
     for(const line of lineList){
         result += `<span class="line" style="animation-delay:${delay}ms">${line}</span>`;
-        delay += 200;
+        delay += 500;
     }
 
     result = result.replace(/\n/g, "");
@@ -1258,13 +1254,15 @@ setup.event.data = {
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="22" name="S0000D-Data" tags="nobr" position="525,1100" size="100,100">&lt;&lt;script&gt;&gt;
 setup.event.data = {
 	&quot;Start&quot;: {
+		img: &quot;assets/images/scene/S0000D/1.jpg&quot;,
 		txt: &quot;[b]Scene1 Text dialog[/b]&quot;,
         choice: [
-			{ txt: &quot;Scene: Grant trait&quot;, next: &quot;scene3&quot; },
+			{ txt: &quot;Scene: Grant trait&quot;, next: &quot;Trait&quot; },
 			{ txt: &quot;Scene: Damage PC&quot;, next: &quot;Damage&quot; },
+			{ txt: &quot;Scene: Text Formatting&quot;, next: &quot;FormatText&quot; },
 			{ txt: &quot;Scene: Grant green aple x1&quot;, next: &quot;Grant&quot;},
 			{ txt: &quot;end scene&quot;, next: &quot;end&quot; },
-		],
+		]
 	},
 	&quot;Damage&quot;: {
 		txt: &quot;You damage yourself&quot;,
@@ -1274,9 +1272,9 @@ setup.event.data = {
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
 			{ txt: &quot;End test scene&quot;, next: &quot;scene1&quot; }
-		],
+		]
 	},
-	&quot;scene3&quot;: {
+	&quot;Trait&quot;: {
 		txt: &quot;You&#39;ve received a trait! Wow that&#39;s amazing&quot;,
 		action: function(entity){
 			setup.entity.trait.grant(entity, 1001);
@@ -1284,7 +1282,7 @@ setup.event.data = {
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
 			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
-		],
+		]
 	},
 	&quot;Grant&quot;: {
 		txt: &quot;You&#39;ve received a single stick!&quot;,
@@ -1294,8 +1292,22 @@ setup.event.data = {
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
 			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
-		],
+		]
 	},
+	&quot;FormatText&quot;: {
+		txt: `[wiggle]Hello Wiggle World![/wiggle]\n
+		[shake]Hello Wiggle World![/shake]\n
+		[wave]Hello Wiggle World![/wave]\n
+		[glow]Hello Wiggle World![/glow]\n
+		[glitch]Hello Wiggle World![/glitch]\n
+		[fade]Hello Wiggle World![/fade]\n
+		[pulse]Hello Wiggle World![/pulse]\n
+		[rainbow]Hello Wiggle World![/rainbow]`,
+		choice: [
+			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
+			{ txt: &quot;End test scene&quot;, next: &quot;scene1&quot; }
+		]
+	}
 };
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="Debug-Area1" tags="area" position="975,1450" size="100,100">&lt;&lt;button &quot;Area2&quot;&gt;&gt;
 	&lt;&lt;play &quot;Debug-Area2&quot;&gt;&gt;
