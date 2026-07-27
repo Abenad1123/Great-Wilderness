@@ -108,7 +108,7 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
 
 @font-face {
   font-family: Roboto-R;
-    src: url('assets/fonts/roboto/Roboto-Regular.ttf');
+  src: url('assets/fonts/roboto/Roboto-Regular.ttf');
 }
 
 @font-face {
@@ -180,7 +180,34 @@ span, a, p {
 #startMenu-logo {width: 100%; max-width: 700px;}
 #startMenu-logo {animation: startMenu-logo-anim 1.5s ease-in-out 0.65s both;}
 
-@keyframes startMenu-logo-anim {0% {opacity: 0;} 100% {opacity: 1;}}</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.controls = false;
+@keyframes startMenu-logo-anim {0% {opacity: 0;} 100% {opacity: 1;}}
+
+@keyframes reveal {
+    to {
+        opacity: 1;
+    }
+}
+
+/*─── EVENT STYLES ────────────────────────────────*/
+.event-img {
+	width: 75%;
+}
+
+/*─── TEXT STYLES ────────────────────────────────*/
+.line {
+	margin-bottom: 15px;
+  	display: block;
+  	opacity: 0;
+    animation: reveal 0.5s forwards;
+}
+
+.txt-bold {
+	 font-family: Roboto-B; 
+}
+
+.txt-italic {
+	font-family: Roboto-I;
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.controls = false;
 Config.history.maxStates = 1;
 Config.saves.maxSlotSaves = 5;
         
@@ -391,7 +418,46 @@ setup.start = {
             currentEvent: ""
         }
     }
-}</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="200,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
+}
+
+setup.text ={}
+setup.text.tag = {
+    b: {
+        class: "txt-bold"
+    },
+    i: {
+        class: "txt-italic"
+    }
+}
+
+
+setup.parseText = function(text) {
+    let tags = Object.keys(setup.text.tag);
+    let result = "";
+
+    let delay = 0;
+    let lineList = text.match(/(.*)[a-z!?.]/g);
+
+    for(const line of lineList){
+        result += `<span class="line" style="animation-delay:${delay}ms">${line}</span>`;
+        delay += 200;
+    }
+
+    result = result.replace(/\n/g, "");
+
+    for (const tag of tags) {
+        const regex = new RegExp(`\\[${tag}\\](.*?)\\[\\/${tag}\\]`, "g");
+
+        result = result.replace(
+            regex,
+            `<span class="${setup.text.tag[tag].class}">$1</span>`
+        );
+    }
+
+    result = result.replace(/\[color \"(.*)\"\](.*)\[\/color\]/g,`<span style="color: $1">$2</span>`);
+
+    return result;
+};</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-passagedata pid="1" name="Untitled Passage" tags="" position="2125,1050" size="200,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
 	&lt;&lt;run UIBar.show()&gt;&gt;
 	&lt;&lt;include &quot;Debug-PC-Data&quot;&gt;&gt;
     &lt;&lt;run setup.entity.stat.calculate($pc)&gt;&gt;
@@ -727,7 +793,7 @@ setup.updateBars = function() {
 $(document).on(&#39;:passagerender&#39;, function() {
   setTimeout(setup.updateBars, 0);
 });
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="12" name="Debug-Scene" tags="" position="275,850" size="200,100">&lt;&lt;set _eventDataPassage = $world.currentEvent + &quot;-Data&quot;&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="12" name="Debug-Scene" tags="nobr" position="275,850" size="200,100">&lt;&lt;set _eventDataPassage = $world.currentEvent + &quot;-Data&quot;&gt;&gt;
 &lt;&lt;include _eventDataPassage&gt;&gt;
 &lt;&lt;unset _eventDataPassage&gt;&gt;
 
@@ -1016,6 +1082,7 @@ $staticNPC = {};
 &gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="S00001-Data" tags="" position="2300,450" size="100,100">&lt;&lt;script&gt;&gt;
 setup.event.data = {
 	&quot;scene1&quot;: {
+		img: &quot;assets/images/scene/S00001/1.jpg&quot;,
 		txt: &quot;You used to be alive. Now, you&#39;re just a soul drifting through the cosmos. No destination. No purpose. Just floating.&quot;,
         choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene2&quot; }
@@ -1040,16 +1107,18 @@ setup.event.data = {
 		]
 	},
 	&quot;scene4&quot;: {
+		img: &quot;assets/images/scene/S00001/2.jpg&quot;,
 		txt: `Then, slowly, something starts pulling you. The pull grows stronger, dragging you toward a space you don&#39;t recognize.
 		
 		Suddenly, a burst of profound information infiltrates your fading mind, and you just know...
 		
-		This is the Realm of Great Wilderness. It&#39;s not just a world; it&#39;s a massive expanse of land stretching the length of a galaxy. Countless continents are scattered across an endless sea.`,
+		This is the [b]Realm of Great Wilderness[/b]. It&#39;s not just a world; it&#39;s a massive expanse of land stretching the length of a galaxy. Countless continents are scattered across an endless sea.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene5&quot;}
 		]
 	},
 	&quot;scene5&quot;: {
+		img: &quot;assets/images/scene/S00001/3.jpg&quot;,
 		txt: `As you draw closer, the cosmic blur fades, and you find yourself suspended in a strange, in-between space. Below you, the endless landmasses of the Great Wilderness stretch out forever. 
 		
 		You&#39;re still just a soul, formless and weightless.`,
@@ -1058,6 +1127,7 @@ setup.event.data = {
 		]
 	},
 	&quot;scene6&quot;: {
+		img: &quot;assets/images/scene/S00001/4.jpg&quot;,
 		txt: `Scattered across the space around you are different kinds of lights. 
 		
 		Without knowing how, you instinctively understand that touching one of these lights will pull you down into a specific part of the realm below.`,
@@ -1074,35 +1144,40 @@ setup.event.data = {
 		]
 	},
 	&quot;scene8&quot;: {
-		txt: `The first light gives off a sharp and heavy pressure. 
+		img: &quot;assets/images/scene/S00001/5.jpg&quot;,
+		txt: `The [b]first light[/b] gives off a sharp and heavy pressure. 
 		It feels like raw power, the kind of strength that could shatter mountains and dry up rivers. It has a defiant energy to it, like a force that refuses to let the heavens decide its fate.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene9&quot;}
 		]
 	},
 	&quot;scene9&quot;: {
-		txt: `The second one glows with shifting layers of colors that hum together in perfect harmony. 
+		img: &quot;assets/images/scene/S00001/6.jpg&quot;,
+		txt: `The [b]second light[/b] glows with shifting layers of colors that hum together in perfect harmony. 
 		It feels deeply mystical. Just being near it gives you the sudden sensation that you could command the world around you and bend reality to your will.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene10&quot;}
 		]
 	},
 	&quot;scene10&quot;: {
-		txt: `Then there is the third. It pulses with a calculated, absolute control. 
+		img: &quot;assets/images/scene/S00001/7.jpg&quot;,
+		txt: `Then there is the [b]third light[/b]. It pulses with a calculated, absolute control. 
 		It holds a depth of information and order that makes your scattered mind ache just trying to process it. It feels completely structured but in a way you can barely even comprehend.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene11&quot;}
 		]
 	},
 	&quot;scene11&quot;: {
-		txt: `Moving to the fourth, a blistering heat washes over your form the second you focus on it. 
+		img: &quot;assets/images/scene/S00001/8.jpg&quot;,
+		txt: `Moving to the [b]fourth[/b], a blistering heat washes over your form the second you focus on it. 
 		Your thoughts immediately start twisting. It drags your mind toward the very edge of madness and pure chaos, feeling incredibly dangerous to even linger near.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene12&quot;}
 		]
 	},
 	&quot;scene12&quot;: {
-		txt: `But the final light is the worst. Pure and undeniable terror drips from it. Even without a physical body, every primal instinct you have left is screaming at you to flee as fast as you possibly can.`,
+		img: &quot;assets/images/scene/S00001/9.jpg&quot;,
+		txt: `But the [b]final light[/b] is the worst. Pure and undeniable terror drips from it. Even without a physical body, every primal instinct you have left is screaming at you to flee as fast as you possibly can.`,
 		choice: [
 			{ txt: &quot;continue&quot;, next: &quot;scene13&quot;}
 		]
@@ -1129,6 +1204,7 @@ setup.event.data = {
 		]
 	},
 	&quot;scene14&quot;: {
+		img: &quot;assets/images/scene/S00001/10.jpg&quot;,
 		txt: `
 		The crushing weight of the space around you forces a decision. You push past the hesitation and drift right toward the blue light. The closer you get, the more that vivid blue glow dominates your vision.
 		`,
@@ -1162,6 +1238,7 @@ setup.event.data = {
 		]
 	},
 	&quot;scene17&quot;: {
+		img: &quot;assets/images/scene/S00001/11.jpg&quot;,
 		txt: `
 		The gentle floating sensation is gone in a flash. A deafening rush of pressure fills your mind as a strange new gravity takes hold. You are plummeting now, pulled downward at a sickening speed straight toward the endless continents waiting below.
 		`,
@@ -1181,7 +1258,7 @@ setup.event.data = {
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="22" name="S0000D-Data" tags="nobr" position="525,1100" size="100,100">&lt;&lt;script&gt;&gt;
 setup.event.data = {
 	&quot;Start&quot;: {
-		txt: &quot;Scene1 Text dialog&quot;,
+		txt: &quot;[b]Scene1 Text dialog[/b]&quot;,
         choice: [
 			{ txt: &quot;Scene: Grant trait&quot;, next: &quot;scene3&quot; },
 			{ txt: &quot;Scene: Damage PC&quot;, next: &quot;Damage&quot; },
@@ -1255,10 +1332,10 @@ setup.event.start = function() {
     $(&quot;#scene-container&quot;).empty();
 
     if(currentScene.img !== undefined) {
-        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot;&gt;`);
+        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
     }
     
-    $(&quot;#scene-container&quot;).wiki(currentScene.txt);
+    $(&quot;#scene-container&quot;).wiki(setup.parseText(currentScene.txt));
 
     let sceneChoices = currentScene.choice;
     for(let i = 0; i &lt; sceneChoices.length; i++){
@@ -1288,13 +1365,12 @@ setup.event.continue = function(sceneKey) {
     let currentScene = setup.event.data[sceneKey];
 
     $(&quot;#choices-container&quot;).empty();
-    $(&quot;#scene-container&quot;).wiki(&quot;&lt;br&gt;&lt;br&gt;&quot;);
 
     if(currentScene.img !== undefined) {
-        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot;&gt;`);
+         $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
     }
 
-    $(&quot;#scene-container&quot;).wiki(currentScene.txt);
+    $(&quot;#scene-container&quot;).wiki(setup.parseText(currentScene.txt));
 
     let sceneChoices = currentScene.choice;
 
@@ -1317,6 +1393,15 @@ setup.event.continue = function(sceneKey) {
     if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
         setup.event.data[sceneKey].action(State.variables.pc);
     }
+
+    requestAnimationFrame(() =&gt; {
+        requestAnimationFrame(() =&gt; {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: &quot;smooth&quot;
+            });
+        });
+    });
 }
 
 Macro.add(&quot;Event&quot;, {
