@@ -8,7 +8,12 @@ setup.item = {
         tags: [],
         description: "",
         img: "",
-        stat: {}
+        stat: {
+            energy: 5
+        },
+        use: function(entity) {
+            setup.action.eat(entity, 1001);
+        }
     },
     1002: {
         name: "Wooden Stick",
