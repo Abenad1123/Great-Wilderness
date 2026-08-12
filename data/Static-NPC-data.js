@@ -1,5 +1,5 @@
 setup.staticNPC = {
-    "S101": {
+    "S001": {
         name: "Celeste Brown",
         race: 101,
         gender: "Female",
@@ -16,15 +16,9 @@ setup.staticNPC = {
         status: {},
 
         gear: {
-            head: null,
-            chest: null,
-            back: null,
-            leg: null,
-            feet: null,
-            rArm: null,
-            lArm: null,
-            rAcc: null,
-            lAcc: null
+            head: null, chest: null, back: null,
+            leg: null, feet: null, rArm: null,
+            lArm: null, rAcc: null, lAcc: null
         },
         inventory: [],
 
@@ -72,15 +66,9 @@ setup.staticNPC = {
         status: {},
 
         gear: {
-            head: null,
-            chest: null,
-            back: null,
-            leg: null,
-            feet: null,
-            rArm: null,
-            lArm: null,
-            rAcc: null,
-            lAcc: null
+            head: null, chest: null, back: null,
+            leg: null, feet: null, rArm: null,
+            lArm: null, rAcc: null, lAcc: null
         },
         inventory: [],
 
@@ -116,13 +104,8 @@ setup.staticNPC = {
 
 setup.staticNPCDat = {
     "S001":{
-        background: "",
-        img: "",
-        loc: ""
-    },
-    "S001":{
-        background: "",
-        img: "",
-        loc: ""
-    },
+        background: "Standard static npc background information!",
+        imgFull: "assets/images/npc/static/S001-full.jpg",
+        imgPort: "assets/images/npc/static/S001-port.jpg",
+    }
 }

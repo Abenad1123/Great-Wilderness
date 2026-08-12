@@ -6,7 +6,7 @@ setup.item = {
         category: "Consumable",
         subCategory: "Food",
         tags: [],
-        description: "",
+        description: "An item's description!",
         img: "",
         stat: {
             energy: 5
@@ -21,7 +21,7 @@ setup.item = {
         category: "Material",
         subCategory: "Wood",
         tags: [],
-        description: "",
+        description: "An item's description!",
         img: "",
         stat: {}
     },
@@ -31,7 +31,7 @@ setup.item = {
         category: "Material",
         subCategory: "Mineral",
         tags: [],
-        description: "",
+        description: "An item's description!",
         img: "",
         stat: {}
     },
@@ -41,7 +41,7 @@ setup.item = {
         category: "Weapon",
         subCategory: "Sword",
         tags: [],
-        description: "",
+        description: "An item's description!",
         img: "",
         stat: {
             durability: 20,
