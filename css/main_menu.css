@@ -1,0 +1,210 @@
+.menu-container {
+	/* Palette Variables restricted to this container only */
+	--menu-gold: #d4af37;
+	--menu-gold-dim: rgba(212, 175, 55, 0.4);
+	--menu-gold-glow: rgba(212, 175, 55, 0.15);
+	--menu-text-light: #f3efe0;
+	--menu-text-muted: #7c7667;
+	--menu-button-bg: rgba(10, 10, 10, 0.85);
+	--menu-border-color: rgba(255, 255, 255, 0.12);
+	--transition-speed: 0.35s;
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+	
+	background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 100%);
+	
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+	padding: 6vh 24px;
+	
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(212, 175, 55, 0.3) #0a0a0a;
+}
+
+/* --- CUSTOM THEMATIC SCROLLBAR (Chrome, Edge, Safari, Opera) --- */
+.menu-container::-webkit-scrollbar {
+	width: 6px;
+}
+.menu-container::-webkit-scrollbar-track {
+	background: #0d0d0d;
+}
+.menu-container::-webkit-scrollbar-thumb {
+	background: var(--menu-gold-dim);
+	border-radius: 3px;
+}
+.menu-container::-webkit-scrollbar-thumb:hover {
+	background: var(--menu-gold);
+}
+
+.menu-container .menu-inner-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	max-width: 480px;
+	margin: auto 0;
+	gap: 40px;  
+	flex-shrink: 0;
+}
+
+/* --- LOGO --- */
+.menu-container .menu-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	max-width: 100%;
+	flex-shrink: 0;
+}
+
+.menu-container #displayTitle-logo {
+	max-width: 440px;
+	width: 80vw;
+	max-height: 25vh;
+	height: auto;
+	object-fit: contain;
+	filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6));
+}
+
+/* --- NAVIGATION GROUP --- */
+.menu-container .menu-navigation {
+	display: flex;
+	flex-direction: column;
+	gap: 12px; /* Closer button proximity */
+	width: 100%;
+	max-width: 320px;
+	flex-shrink: 0;
+}
+
+/* Base button properties shared globally inside navigation */
+.menu-container .menu-navigation button {
+	position: relative;
+	display: block;
+	width: 100%;
+	padding: 13px 30px !important;
+	font-family: "Georgia", "Times New Roman", serif !important;
+	font-weight: 400 !important;
+	letter-spacing: 0.15em !important;
+	text-transform: capitalize;
+	border-radius: 3px !important;
+	cursor: pointer;
+	box-sizing: border-box;
+	transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+	overflow: hidden;
+}
+
+/* Button Active Pressed States */
+.menu-container .menu-navigation button:active {
+	transform: scale(0.98) !important;
+}
+
+/* --- 1. PRIMARY ACTION (START) --- */
+.menu-container .btn-primary button {
+	background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(10,10,10,0.95) 100%) !important;
+	border: 1px solid var(--menu-gold-dim) !important;
+	color: #ffffff !important;
+	font-weight: 600 !important;
+	text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(212, 175, 55, 0.1);
+}
+.menu-container .btn-primary button:hover {
+	border-color: var(--menu-gold) !important;
+	background: linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(20,20,20,0.95) 100%) !important;
+	box-shadow: 0 0 20px var(--menu-gold-glow), inset 0 0 15px rgba(212, 175, 55, 0.2);
+	letter-spacing: 0.2em !important;
+}
+
+/* --- 2. SECONDARY ACTION (CONTINUE) --- */
+.menu-container .btn-secondary button {
+	background: var(--menu-button-bg) !important;
+	border: 1px solid var(--menu-border-color) !important;
+	color: var(--menu-text-light) !important;
+	box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.menu-container .btn-secondary button:hover {
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.35) !important;
+	background: rgba(25, 25, 25, 0.85) !important;
+	box-shadow: 0 0 15px rgba(255, 255, 255, 0.05), 0 2px 8px rgba(0, 0, 0, 0.6);
+	letter-spacing: 0.2em !important;
+}
+
+/* --- 3. TERTIARY ACTION (SETTINGS) --- */
+.menu-container .btn-tertiary button {
+	background: rgba(10, 10, 10, 0.6) !important;
+	border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Fully visible border */
+	color: rgba(255, 255, 255, 0.55) !important;            /* Fully visible muted text */
+	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+.menu-container .btn-tertiary button:hover {
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.35) !important;
+	background: rgba(20, 20, 20, 0.8) !important;
+	box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+	letter-spacing: 0.2em !important;
+}
+
+.menu-container .menu-extra-content {
+	width: 100%;
+	max-width: 420px;
+	background: rgba(0, 0, 0, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.03);
+	border-radius: 4px;
+	padding: 24px;
+	box-sizing: border-box;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	text-align: left;
+	flex-shrink: 0;
+}
+
+.menu-container .extra-title {
+	font-family: "Georgia", serif;
+	font-size: 1.1rem;
+	color: var(--menu-gold);
+	margin-top: 0;
+	margin-bottom: 12px;
+	letter-spacing: 0.05em;
+	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+	padding-bottom: 6px;
+}
+
+.menu-container .extra-text {
+	font-family: "Georgia", "Times New Roman", serif;
+	font-size: 0.85rem;
+	line-height: 1.5;
+	color: var(--menu-text-muted);
+	margin: 8px 0;
+}
+
+/* --- FOOTER LINKS --- */
+.menu-container .menu-footer {
+	flex-shrink: 0;
+	margin-top: auto; 
+	padding-top: 20px;
+}
+
+.menu-container .menu-footer a {
+	font-family: "Courier New", monospace;
+	font-size: 0.8rem !important;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--menu-text-muted) !important;
+	text-decoration: none !important;
+	transition: color var(--transition-speed) ease;
+	border: 1px solid transparent;
+	padding: 4px 8px;
+}
+
+.menu-container .menu-footer a:hover {
+	color: var(--menu-gold) !important;
+	text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}

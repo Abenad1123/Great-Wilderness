@@ -217,6 +217,7 @@ $(document).on(":storyready", function () {
     $("head").append('<link rel="stylesheet" href="css/location_style.css">');
   	$("head").append('<link rel="stylesheet" href="css/inventory_passage.css">');
     $("head").append('<link rel="stylesheet" href="css/text-formatting.css">');
+  	$("head").append('<link rel="stylesheet" href="css/main_menu.css">');
 });
 
 setup.action = {};
@@ -940,7 +941,7 @@ Points : &lt;&lt;= $featScore&gt;&gt;
 &lt;&lt;include &quot;Text-Parser--Logic&quot;&gt;&gt;
 
 &lt;&lt;set $passageHistory = []&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo2.png&quot; id=&quot;displayTitle-logo&quot;&gt;
-&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.22 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,850" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
+&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.23 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,850" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
 &lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="Item-Data" tags="data" position="1000,25" size="200,100">&lt;&lt;script&gt;&gt;
 // Version 0.4 InDev
@@ -2500,30 +2501,54 @@ setup.area.check = function(area) {
         }
     }
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="Main-Menu" tags="" position="1825,1200" size="200,100">&lt;&lt;run UIBar.hide()&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="Main-Menu" tags="nobr" position="1825,1200" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
 
-&lt;&lt;button &quot;Start&quot;&gt;&gt;
-	&lt;&lt;run setup.feat.sync()&gt;&gt;
-    &lt;&lt;run setup.start.init()&gt;&gt;
-    &lt;&lt;run setup.start.new()&gt;&gt;
-	&lt;&lt;Event &quot;S00001&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;
+&lt;div class=&quot;menu-container&quot;&gt;
+	&lt;!-- Wrapper keeps Logo and Buttons grouped tightly and centered together --&gt;
+	&lt;div class=&quot;menu-inner-wrap&quot;&gt;
+		&lt;header class=&quot;menu-header&quot;&gt;
+			&lt;img src=&quot;assets/images/ui/ui_logo.png&quot; id=&quot;displayTitle-logo&quot; alt=&quot;The Realm of Great Wildness&quot;&gt;
+		&lt;/header&gt;
 
-&lt;&lt;button &quot;Continue&quot;&gt;&gt;
-	&lt;&lt;run UI.saves()&gt;&gt;
-&lt;&lt;/button&gt;&gt;
+		&lt;!-- Main Action Options --&gt;
+		&lt;nav class=&quot;menu-navigation&quot;&gt;
+			&lt;div class=&quot;btn-primary&quot;&gt;
+				&lt;&lt;button &quot;Start&quot;&gt;&gt;
+					&lt;&lt;run setup.feat.sync()&gt;&gt;
+					&lt;&lt;run setup.start.init()&gt;&gt;
+					&lt;&lt;run setup.start.new()&gt;&gt;
+					&lt;&lt;Event &quot;S00001&quot;&gt;&gt;
+				&lt;&lt;/button&gt;&gt;
+			&lt;/div&gt;
 
-&lt;&lt;button &quot;Settings&quot;&gt;&gt;
-	&lt;&lt;OpenPanel &quot;Settings&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;
+			&lt;div class=&quot;btn-secondary&quot;&gt;
+				&lt;&lt;button &quot;Continue&quot;&gt;&gt;
+					&lt;&lt;run UI.saves()&gt;&gt;
+				&lt;&lt;/button&gt;&gt;
+			&lt;/div&gt;
 
-[[Debug Passage]] 
+			&lt;div class=&quot;btn-tertiary&quot;&gt;
+				&lt;&lt;button &quot;Settings&quot;&gt;&gt;
+					&lt;&lt;OpenPanel &quot;Settings&quot;&gt;&gt;
+				&lt;&lt;/button&gt;&gt;
+			&lt;/div&gt;
+		&lt;/nav&gt;
+	&lt;/div&gt;
+
+	&lt;div class=&quot;menu-extra-content&quot;&gt;
+		&lt;h3 class=&quot;extra-title&quot;&gt; InDev  0.23&lt;/h3&gt;
+		&lt;p class=&quot;extra-text&quot;&gt;Main menu now has proper UI&lt;/p&gt;
+	&lt;/div&gt;
+
+	&lt;!-- Understated Footer --&gt;
+	&lt;footer class=&quot;menu-footer&quot;&gt;
+		&lt;&lt;link &quot;Debug Passage&quot; &quot;Debug Passage&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+	&lt;/footer&gt;
+&lt;/div&gt;
 
 &lt;!--
 [[Character-Creation-1]] 
---&gt;
-
-</tw-passagedata><tw-passagedata pid="45" name="Start-Loading-Screen" tags="nobr" position="1575,1200" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
+--&gt;</tw-passagedata><tw-passagedata pid="45" name="Start-Loading-Screen" tags="nobr" position="1575,1200" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
 &lt;div id=&quot;startMenu-head&quot;&gt;
 	&lt;img src=&quot;assets\images\ui\ui_logo.png&quot; id=&quot;startMenu-logo&quot;&gt;
 &lt;/div&gt;
