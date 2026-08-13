@@ -1,5 +1,9 @@
+/* =========================================================================
+   SCROLLABLE FANTASY MAIN MENU (PERFORMANCE OPTIMIZED)
+   ========================================================================= */
+
 .menu-container {
-	/* Palette Variables restricted to this container only */
+	/* Palette Variables */
 	--menu-gold: #d4af37;
 	--menu-gold-dim: rgba(212, 175, 55, 0.4);
 	--menu-gold-glow: rgba(212, 175, 55, 0.15);
@@ -9,52 +13,175 @@
 	--menu-border-color: rgba(255, 255, 255, 0.12);
 	--transition-speed: 0.35s;
 
+	/* Fixed parent container - absolutely no scrolling allowed on the base layer */
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
 	z-index: 9999;
-	
-	background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 100%);
+	background: #0a0a0a;
+	overflow: hidden !important; 
+}
+
+/* --- THE SCROLLABLE CONTENT WRAPPER --- */
+.menu-container .menu-scroll-wrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 10; /* Sits completely on top of background, mist, and vignette */
+	overflow-y: auto; /* Handles all scrolling internally */
 	
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: flex-start;
 	box-sizing: border-box;
 	padding: 6vh 24px;
 	
-	overflow-y: auto;
 	scrollbar-width: thin;
 	scrollbar-color: rgba(212, 175, 55, 0.3) #0a0a0a;
 }
 
-/* --- CUSTOM THEMATIC SCROLLBAR (Chrome, Edge, Safari, Opera) --- */
-.menu-container::-webkit-scrollbar {
+/* Custom Scrollbar styled for the Scroll Wrap */
+.menu-container .menu-scroll-wrap::-webkit-scrollbar {
 	width: 6px;
 }
-.menu-container::-webkit-scrollbar-track {
+.menu-container .menu-scroll-wrap::-webkit-scrollbar-track {
 	background: #0d0d0d;
 }
-.menu-container::-webkit-scrollbar-thumb {
+.menu-container .menu-scroll-wrap::-webkit-scrollbar-thumb {
 	background: var(--menu-gold-dim);
 	border-radius: 3px;
 }
-.menu-container::-webkit-scrollbar-thumb:hover {
+.menu-container .menu-scroll-wrap::-webkit-scrollbar-thumb:hover {
 	background: var(--menu-gold);
 }
 
+/* --- THE CENTERING WRAPPER --- */
 .menu-container .menu-inner-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
 	max-width: 480px;
-	margin: auto 0;
-	gap: 40px;  
+	margin: auto 0; 
+	gap: 40px;      
 	flex-shrink: 0;
 }
+
+/* =========================================================================
+   STATIONARY BACKGROUND LAYERS
+   ========================================================================= */
+
+/* --- Layer 1: Base Artwork --- */
+.menu-container .menu-bg-artwork {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 60vh; /* Sits on the upper 60% of the viewport */
+	z-index: 1;
+	
+	background-position: center top;
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0.55; 
+}
+
+/* Nike-inspired bottom-fade gradient */
+.menu-container .menu-bg-artwork::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom, transparent 30%, #0a0a0a 100%);
+	pointer-events: none;
+}
+
+/* --- Layer 2: Drifting Mist & Smoke (No-Blur Performance Tuning) --- */
+.menu-container .menu-smoke-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 2; 
+	overflow: hidden;
+}
+
+/* We remove the GPU-heavy "filter: blur()" filter. 
+   Instead, we use soft-feathered CSS radial-gradients. */
+.menu-container .mist-cloud {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	mix-blend-mode: screen; /* Blends light particles elegantly into dark scenes */
+}
+
+/* Mist Cloud 1: Soft warm gold/amber glow */
+.menu-container .cloud-1 {
+	background-image: radial-gradient(circle at 35% 35%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
+	animation: drift-one 25s infinite alternate ease-in-out;
+}
+
+/* Mist Cloud 2: Smooth dark slate mist */
+.menu-container .cloud-2 {
+	background-image: radial-gradient(circle at 65% 65%, rgba(40, 40, 50, 0.45) 0%, transparent 60%);
+	animation: drift-two 35s infinite alternate ease-in-out;
+}
+
+/* Mist Cloud 3: Ultra-soft pale fog */
+.menu-container .cloud-3 {
+	background-image: radial-gradient(circle at 15% 75%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+	animation: drift-one 30s infinite alternate-reverse ease-in-out;
+}
+
+/* --- Layer 3: Dark Vignette Spotlight --- */
+.menu-container .menu-vignette {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 3; 
+	background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(5, 5, 5, 0.95) 100%);
+	pointer-events: none;
+}
+
+/* --- GPU-ACCELERATED DRIFT ANIMATIONS --- */
+/* We switch to translate3d to offload rendering strictly to the graphics card */
+@keyframes drift-one {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(4vw, 2vh, 0);
+	}
+	100% {
+		transform: translate3d(-2vw, -1vh, 0);
+	}
+}
+
+@keyframes drift-two {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(-4vw, -2vh, 0);
+	}
+	100% {
+		transform: translate3d(2vw, 1vh, 0);
+	}
+}
+
+/* =========================================================================
+   UI COMPONENT RULES
+   ========================================================================= */
 
 /* --- LOGO --- */
 .menu-container .menu-header {
@@ -71,20 +198,19 @@
 	max-height: 25vh;
 	height: auto;
 	object-fit: contain;
-	filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6));
+	filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.8));
 }
 
 /* --- NAVIGATION GROUP --- */
 .menu-container .menu-navigation {
 	display: flex;
 	flex-direction: column;
-	gap: 12px; /* Closer button proximity */
+	gap: 12px;
 	width: 100%;
 	max-width: 320px;
 	flex-shrink: 0;
 }
 
-/* Base button properties shared globally inside navigation */
 .menu-container .menu-navigation button {
 	position: relative;
 	display: block;
@@ -101,19 +227,18 @@
 	overflow: hidden;
 }
 
-/* Button Active Pressed States */
 .menu-container .menu-navigation button:active {
 	transform: scale(0.98) !important;
 }
 
-/* --- 1. PRIMARY ACTION (START) --- */
+/* --- BUTTON HIERARCHY --- */
 .menu-container .btn-primary button {
 	background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(10,10,10,0.95) 100%) !important;
 	border: 1px solid var(--menu-gold-dim) !important;
 	color: #ffffff !important;
 	font-weight: 600 !important;
 	text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(212, 175, 55, 0.1);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(212, 175, 55, 0.1);
 }
 .menu-container .btn-primary button:hover {
 	border-color: var(--menu-gold) !important;
@@ -122,7 +247,42 @@
 	letter-spacing: 0.2em !important;
 }
 
-/* --- 2. SECONDARY ACTION (CONTINUE) --- */
+/* Alignment ticks appearing on hover */
+.menu-container .menu-navigation button::before,
+.menu-container .menu-navigation button::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	width: 12px;
+	height: 1px;
+	background: var(--menu-gold);
+	transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1);
+	opacity: 0;
+}
+
+.menu-container .menu-navigation button::before {
+	left: 10px;
+	transform: translateY(-50%) scaleX(0);
+}
+
+.menu-container .menu-navigation button::after {
+	right: 10px;
+	transform: translateY(-50%) scaleX(0);
+}
+
+.menu-container .menu-navigation button:hover::before {
+	opacity: 1;
+	left: 20px;
+	transform: translateY(-50%) scaleX(1);
+}
+
+.menu-container .menu-navigation button:hover::after {
+	opacity: 1;
+	right: 20px;
+	transform: translateY(-50%) scaleX(1);
+}
+
+/* --- SECONDARY ACTION --- */
 .menu-container .btn-secondary button {
 	background: var(--menu-button-bg) !important;
 	border: 1px solid var(--menu-border-color) !important;
@@ -137,11 +297,11 @@
 	letter-spacing: 0.2em !important;
 }
 
-/* --- 3. TERTIARY ACTION (SETTINGS) --- */
+/* --- TERTIARY ACTION --- */
 .menu-container .btn-tertiary button {
 	background: rgba(10, 10, 10, 0.6) !important;
-	border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Fully visible border */
-	color: rgba(255, 255, 255, 0.55) !important;            /* Fully visible muted text */
+	border: 1px solid rgba(255, 255, 255, 0.15) !important;
+	color: rgba(255, 255, 255, 0.55) !important;
 	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
 }
 .menu-container .btn-tertiary button:hover {
@@ -152,18 +312,20 @@
 	letter-spacing: 0.2em !important;
 }
 
+/* --- EXTRA CONTENT SECTION --- */
 .menu-container .menu-extra-content {
 	width: 100%;
 	max-width: 420px;
-	background: rgba(0, 0, 0, 0.4);
+	background: rgba(0, 0, 0, 0.55);
 	border: 1px solid rgba(255, 255, 255, 0.03);
 	border-radius: 4px;
 	padding: 24px;
 	box-sizing: border-box;
-	margin-top: 40px;
+	margin-top: 40px; 
 	margin-bottom: 40px;
 	text-align: left;
 	flex-shrink: 0;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 .menu-container .extra-title {
@@ -185,7 +347,7 @@
 	margin: 8px 0;
 }
 
-/* --- FOOTER LINKS --- */
+/* --- FOOTER --- */
 .menu-container .menu-footer {
 	flex-shrink: 0;
 	margin-top: auto; 
@@ -207,4 +369,21 @@
 .menu-container .menu-footer a:hover {
 	color: var(--menu-gold) !important;
 	text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* --- SCROLLING COMPATIBILITY FOR PHONES --- */
+@media screen and (max-height: 700px) {
+	.menu-container .menu-scroll-wrap {
+		padding: 4vh 15px;
+	}
+	.menu-container #displayTitle-logo {
+		max-height: 22vh;
+	}
+	.menu-container .menu-navigation {
+		gap: 10px;
+	}
+	.menu-container .menu-navigation button {
+		padding: 10px 20px !important;
+		font-size: 0.95rem !important;
+	}
 }
