@@ -13,7 +13,7 @@ margin: 0 auto;
 #displayTitle-desc {
 text-align: center;
 margin: 4px 0 16px 0;
-font-size: 0.9em;
+font-size: 0.6em;
 }
 
 #nav-event-container {
@@ -53,8 +53,7 @@ flex-direction: column;
 gap: var(--spacing-base);
 }
 
-.nav-buttons-col,
-.nav-buttons-row {
+.nav-buttons-col, .nav-buttons-row {
 display: flex;
 width: 100%;
 gap: var(--spacing-base);
@@ -69,8 +68,7 @@ flex-direction: column;
 flex-direction: row;
 }
 
-.nav-buttons-col a,
-.nav-buttons-row a {
+.nav-buttons-col a, .nav-buttons-row a {
 flex: 1;
 display: block;
 text-align: center;

@@ -126,19 +126,35 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
     src: url('assets/fonts/roboto/Roboto-BoldItalic.ttf');
 }
 
-/* ─── Default ──────────────────────────────── */
-body {background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 100%);}
 
-a:hover {text-decoration: none;}
+@font-face {
+  font-family: Alte-B;
+    src: url('assets/fonts/alte_haas_grotesk/AlteHaasGroteskBold.ttf');
+}
+
+@font-face {
+  font-family: Alte;
+    src: url('assets/fonts/alte_haas_grotesk/AlteHaasGroteskRegular.ttf');
+}
+
+/* ─── Default ──────────────────────────────── */
+
+a:hover {
+  	text-decoration: none;
+}
 
 p {
-  margin-block-start: 0.2em;
+ 	margin-block-start: 0.2em;
     margin-block-end: 0.2em;
 }
 
-span, a, p {
-  font-family: Roboto-R;
-    font-size: var(--font-size);
+span, a, p, li {
+  font-family: Alte;
+  font-size: var(--font-size);
+}
+
+button {
+	font-family: Alte;
 }
 
 .no-select {
@@ -172,9 +188,48 @@ span, a, p {
   margin-top: 10px;
 }
 
+#story button, .macro-button {
+    display: inline-block;
+    border: none;
+    text-decoration: none !important;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    padding: 10px 22px;
+    margin: 4px;
+    border-radius: 2px;
+
+    background-color: #4a4a4a;
+    color: #e6e6e6 !important;
+
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+#story button:hover, .macro-button:hover {
+    background-color: #666666;
+    color: #ffffff !important;
+}
+
+#story button:active, .macro-button:active {
+    background-color: #333333;
+    transform: translateY(1px);
+}
+
+#story button:disabled, .macro-button:disabled, button[disabled] {
+    background-color: #3a3a3a;
+    color: #777777 !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
 /*─── CSS ANIMATION ────────────────────────────────*/
 #startMenu-head {
-  display: flex; justify-content: center; align-items: center; margin-top: 20vh; position: relative; left: -10px;
+  display: flex; justify-content: center; align-items: center; margin-top: 15vh; position: relative; left: -10px;
 }
 
 #startMenu-logo {width: 100%; max-width: 850px;}
@@ -193,8 +248,11 @@ span, a, p {
 
 /*─── EVENT STYLES ────────────────────────────────*/
 .event-img {
-	width: 75%;
+	width: clamp(200px, 75vw, 600px);
   	animation: reveal 1.5s ease 0s forwards;
+  	display: block;
+  	margin-left: auto;
+  	margin-right: auto;
 }
 
 /*─── TEXT STYLES ────────────────────────────────*/
@@ -205,19 +263,108 @@ span, a, p {
     animation: reveal 0.5s forwards;
 }
 
+.prevent-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .item-container {
+}
+
+.scene-view {
+	--choice-gold: #d4af37;
+	--choice-gold-glow: rgba(212, 175, 55, 0.1);
+	--transition-speed: 0.35s;
+
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 4vh 20px;
+	box-sizing: border-box;
+}
+
+/* --- DIVIDER --- */
+.choices-divider {
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.2), transparent);
+	margin: 3rem 0;
+}
+
+#choices-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin-top: 1.5rem;
+  	gap: 10px;
+}
+
+#choices-container a, #choices-container .link-internal {
+	position: relative;
+	display: block;
+	width: 100%;
+	padding: 8px 24px !important;
+	background: rgba(15, 12, 12, 0.65) !important;
+	border: 1px solid rgba(255, 255, 255, 0.08) !important;
+	border-left: 3px solid rgba(255, 255, 255, 0.25) !important;
+	border-radius: 4px !important;
+	
+	font-size: 0.85rem !important;
+	font-weight: 400 !important;
+	letter-spacing: 0.05em !important;
+	color: var(--text-dim) !important;
+	text-decoration: none !important;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	box-sizing: border-box;
+	transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+	cursor: pointer;
+}
+
+#choices-container a:hover, #choices-container .link-internal:hover {
+	color: #ffffff !important;
+	background: rgba(25, 20, 20, 0.8) !important;
+	border-color: rgba(212, 175, 55, 0.35) !important;
+	border-left-color: var(--choice-gold) !important;
+	padding-left: 34px !important;
+	box-shadow: 
+		0 6px 15px rgba(0, 0, 0, 0.6), 
+		0 0 10px var(--choice-gold-glow),
+		inset 0 0 8px rgba(212, 175, 55, 0.05);
+	letter-spacing: 0.08em !important;
+}
+
+#choices-container a:focus {
+	outline: none;
+	border-color: var(--choice-gold) !important;
+}
+
+#choices-container a:active, #choices-container .link-internal:active {
+	transform: scale(0.99);
+}
+
+@media screen and (max-width: 600px) {
+	.scene-view {
+		padding: 2vh 12px;
+	}
+	#scene-container {
+		font-size: 1.05rem;
+	}
+	#choices-container a {
+		padding: 14px 20px !important;
+		font-size: 0.95rem !important;
+	}
 }</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.controls = false;
 Config.history.maxStates = 1;
 Config.saves.maxSlotSaves = 5;
         
 $(document).on(":storyready", function () {
     $("head").append('<link rel="stylesheet" href="css/navigation_menu.css">');
-    $("head").append('<link rel="stylesheet" href="css/save_panel.css">');
-    $("head").append('<link rel="stylesheet" href="css/battle_passage.css">');
-    $("head").append('<link rel="stylesheet" href="css/location_style.css">');
-  	$("head").append('<link rel="stylesheet" href="css/inventory_passage.css">');
     $("head").append('<link rel="stylesheet" href="css/text-formatting.css">');
   	$("head").append('<link rel="stylesheet" href="css/main_menu.css">');
+    $("head").append('<link rel="stylesheet" href="css/character_creation.css">');
 });
 
 setup.action = {};
@@ -311,6 +458,7 @@ setup.renderAge = function(tick) {
     const vars = State.variables;
 
     setup.advanceTimeMath(vars.pc.age, tick);
+    setup.setPortrait(vars.pc);
 
     const staticNPCData = Object.keys(vars.staticNPC, tick);
 
@@ -319,7 +467,7 @@ setup.renderAge = function(tick) {
 
         if(npc.age) setup.advanceTimeMath(npc.age);
     }
-}
+};
 
 setup.advanceTimeMath = function(timeObject, tick) {
     timeObject.minute += tick;
@@ -332,6 +480,31 @@ setup.advanceTimeMath = function(timeObject, tick) {
 
     timeObject.year += Math.floor(timeObject.day / 365);
     timeObject.day %= 365;
+};
+
+setup.setPortrait = function(entity){
+    let vars = State.variables;
+    if(entity === vars.pc){
+        if(entity.img === ""){
+            setup.log.warning("PC doesn't have a portrait!");
+            return;
+        }
+
+        switch(true){
+            case (entity.age.year >= 7 && entity.age.year <= 17):
+                entity.img = entity.img.slice(0, entity.img.length - 1) + "0";
+                break;
+            case (entity.age.year >= 18 && entity.age.year <= 30):
+                entity.img = entity.img.slice(0, entity.img.length - 1) + "1";
+                break;
+            case (entity.age.year >= 31 && entity.age.year <= 59):
+                entity.img = entity.img.slice(0, entity.img.length - 1) + "2";
+                break;
+            case (entity.age.year >= 60):
+                entity.img = entity.img.slice(0, entity.img.length - 1) + "3";
+                break;
+        }
+    }
 };
 
 setup.randInt =  function(min, max) {
@@ -461,7 +634,9 @@ setup.start.new = function() {
 
     vars.pc = {
         name: null,
+        img: null,
         race: null,
+        fate: null,
         gender: null,
         age: {
             minute: 0,
@@ -598,6 +773,8 @@ setup.start.new = function() {
     };
 
     vars.staticNPC = {};
+
+    setup.log.info("Creating new character template!");
 }
 
 setup.feat.loop = function() {
@@ -674,6 +851,8 @@ setup.feat.calculate = function() {
             vars.featScore += setup.feat.data[featId].value;
         }
     });
+
+    console.log(vars.featScore);
 }
 
 Macro.add("SaveFile", {
@@ -733,7 +912,7 @@ setup.time = function() {
         t.day * 24 * 60 +
         t.year * 365 * 24 * 60
     );
-}</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-passagedata pid="1" name="Debug Passage" tags="" position="2075,1200" size="200,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
+}</script><tw-tag name="nobr" color="yellow"></tw-tag><tw-tag name="NoBacktrack" color="red"></tw-tag><tw-tag name="panel" color="green"></tw-tag><tw-tag name="data" color="purple"></tw-tag><tw-tag name="dialog" color="blue"></tw-tag><tw-tag name="logic" color="red"></tw-tag><tw-tag name="area" color="orange"></tw-tag><tw-tag name="widget" color="purple"></tw-tag><tw-passagedata pid="1" name="Debug Passage" tags="" position="2075,1200" size="200,100">&lt;&lt;button &quot;Generate Debug Character&quot;&gt;&gt;
 	&lt;&lt;run UIBar.show()&gt;&gt;
     &lt;&lt;run setup.start.init()&gt;&gt;
 	&lt;&lt;include &quot;Debug-PC-Data&quot;&gt;&gt;
@@ -929,8 +1108,6 @@ Points : &lt;&lt;= $featScore&gt;&gt;
 &lt;&lt;include &quot;PRand-NPC-Data&quot;&gt;&gt;
 &lt;&lt;include &quot;HRand-NPC-Data&quot;&gt;&gt;
 
-&lt;&lt;include &quot;Widget-General&quot;&gt;&gt;
-
 &lt;&lt;include &quot;Action--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Shop--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Event--Logic&quot;&gt;&gt;
@@ -940,8 +1117,10 @@ Points : &lt;&lt;= $featScore&gt;&gt;
 &lt;&lt;include &quot;Area--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Text-Parser--Logic&quot;&gt;&gt;
 
+&lt;&lt;include  &quot;CardWidgets&quot;&gt;&gt;
+
 &lt;&lt;set $passageHistory = []&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo2.png&quot; id=&quot;displayTitle-logo&quot;&gt;
-&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.235 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,850" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
+&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.24.0 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,850" size="200,100">&lt;&lt;button &quot;Go back&quot;&gt;&gt;
   &lt;&lt;goback&gt;&gt;
 &lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="Item-Data" tags="data" position="1000,25" size="200,100">&lt;&lt;script&gt;&gt;
 // Version 0.4 InDev
@@ -999,7 +1178,7 @@ setup.item = {
 setup.race = {
     101: {
         name: &quot;Human&quot;,
-        description: &quot;&quot;,
+        description: &quot;Humans are said to be the dominant race of this continent. It said they possess incredible will to innovate and incredible will to survive&quot;,
         lifespan: 80,
         genders: [&quot;Male&quot;, &quot;Female&quot;],
         multiplier: {
@@ -1009,7 +1188,7 @@ setup.race = {
         stat: {
             str: 0.15,
             con: 0.15,
-            int: 0.4,
+            int: 0.45,
             agi: 0.2,
             per: 0.2,
             regen: 0
@@ -1017,7 +1196,7 @@ setup.race = {
     },
     102: {
         name: &quot;Ancient Human&quot;,
-        description: &quot;&quot;,
+        description: &quot;Anicent humans are said to be the old version of humans. They possess enourmous strength enough survive in the harsh environment of the acient times.&quot;,
         lifespan: 120,
         genders: [&quot;Male&quot;, &quot;Female&quot;],
         multiplier: {
@@ -1027,7 +1206,7 @@ setup.race = {
         stat: {
             str: 0.25,
             con: 0.25,
-            int: 0.45,
+            int: 0.3,
             agi: 0.3,
             per: 0.3,
             regen: 0
@@ -1128,9 +1307,13 @@ $(document).on(&#39;:passagerender&#39;, function() {
 &lt;&lt;run setup.event.start()&gt;&gt;
 &lt;&lt;/done&gt;&gt;
 
-&lt;div id=&quot;scene-container&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;scene-view&quot;&gt;
+	&lt;div id=&quot;scene-container&quot;&gt;&lt;/div&gt;
 
-&lt;div id=&quot;choices-container&quot;&gt;&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="Debug-Shop" tags="" position="25,975" size="200,100">&lt;&lt;set _shopID = 101&gt;&gt;
+	&lt;div class=&quot;choices-divider&quot;&gt;&lt;/div&gt;
+
+	&lt;div id=&quot;choices-container&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="Debug-Shop" tags="" position="25,975" size="200,100">&lt;&lt;set _shopID = 101&gt;&gt;
 &lt;&lt;run setup.shop.check(_shopID)&gt;&gt;
 &lt;!----------------------------------------------------------------------------------------&gt;
 &lt;&lt;set $items = $shop.data[_shopID].items&gt;&gt;
@@ -1154,12 +1337,10 @@ Stock : &lt;&lt;= $items[_i][1]&gt;&gt;
     &lt;&lt;/if&gt;&gt;
 &lt;&lt;/if&gt;&gt;
 
-Passge history : &lt;&lt;= $passageHistory&gt;&gt;&lt;br&gt;
-
 &lt;&lt;done&gt;&gt;
 	&lt;&lt;run setup.area.check()&gt;&gt;
 &lt;&lt;/done&gt;&gt;
-&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="Widget-General" tags="" position="3075,25" size="200,100">&lt;&lt;widget &quot;goback&quot;&gt;&gt;
+&lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="16" name="Widget-General" tags="widget" position="3075,25" size="200,100">&lt;&lt;widget &quot;goback&quot;&gt;&gt;
 	&lt;&lt;if $passageHistory.length &lt;= 1&gt;&gt;
     	&lt;&lt;run setup.log.warning(&quot;Cannot go back, there&#39;s nothing to go back to&quot;)&gt;&gt;
     &lt;&lt;else&gt;&gt;
@@ -1243,7 +1424,9 @@ Year : &lt;&lt;= $world.time.year&gt;&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="20" name="Debug-PC-Data" tags="" position="275,1100" size="200,100">&lt;&lt;run
 $pc = {
     name: &quot;John Doe&quot;,
+    img: &quot;m1-1&quot;,
     race: 101,
+    fate: &quot;&quot;,
     gender: &quot;Male&quot;,
     age: {
         minute: 0,
@@ -1405,7 +1588,8 @@ $shop = {
 
 $staticNPC = {};
 $prandNPC = {};
-&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="S00001-Data" tags="" position="2300,450" size="100,100">&lt;&lt;script&gt;&gt;
+&gt;&gt;</tw-passagedata><tw-passagedata pid="21" name="S00001-Data" tags="" position="2300,450" size="100,100">&lt;!-- Start - Reincarnation Event --&gt;
+&lt;&lt;script&gt;&gt;
 setup.event.data = {
 	&quot;scene1&quot;: {
 		img: &quot;assets/images/event/S00001/1.jpg&quot;,
@@ -1584,6 +1768,19 @@ setup.event.data = {
 			{ txt: &quot;Scene: Text Formatting&quot;, next: &quot;FormatText&quot; },
 			{ txt: &quot;Scene: Grant green aple x1&quot;, next: &quot;Grant&quot;},
 			{ txt: &quot;Scene: Dialog scene&quot;, next: &quot;dialog&quot;},
+			{ txt: &quot;Scene: This choice requires for the PC to have Thick Bones Trait!&quot;, next: &quot;req&quot;, 
+			  req: function(){
+				if(State.variables.pc.trait.innate.includes(1001)){
+					return true;
+				} else {
+					return false;
+				}
+			}},
+			{ txt: &quot;Scene: This choice contains a function that runs a function without going to a scene!&quot;, next: &quot;Start&quot;,
+				func: function(){
+					setup.action.harm(State.variables.pc, 5);
+				}
+			},
 			{ txt: &quot;end scene&quot;, next: &quot;end&quot; },
 		]
 	},
@@ -1610,7 +1807,7 @@ setup.event.data = {
 	&quot;Grant&quot;: {
 		txt: &quot;You&#39;ve received a single stick!&quot;,
 		action: function(entity){
-			setup.inventory.grant(entity, 1001, 1);
+			setup.inv.grant(entity, 1001, 1);
 		},
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
@@ -1625,14 +1822,22 @@ setup.event.data = {
 		[glitch]Hello Wiggle World![/glitch]\n
 		[fade]Hello Wiggle World![/fade]\n
 		[pulse]Hello Wiggle World![/pulse]\n
-		[rainbow]Hello Wiggle World![/rainbow]`,
+		[rainbow]Hello Wiggle World![/rainbow]\n
+		[mult b wave][/mult]`,
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
 			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
 		]
 	},
 	&quot;dialog&quot;: {
-		txt: `[dialog S001 static]Hello $World![/dialog]`,
+		txt: `[dialog S001 static]Hello World![/dialog]`,
+		choice: [
+			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
+			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
+		]
+	},
+	&quot;req&quot;: {
+		txt: `[dialog S001 static]You must&#39;ve have the trait Thick Bones right![/dialog]`,
 		choice: [
 			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
 			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
@@ -1662,6 +1867,9 @@ setup.event.data = {
 setup.event.start = function() {
     if(setup.event.data === undefined) return;
 
+    State.variables.event.data = {};
+    State.variables.event.flags = {};
+
     const temp = State.temporary;
 
     temp.sceneLevel = 0;
@@ -1672,28 +1880,11 @@ setup.event.start = function() {
 
     $(&quot;#scene-container&quot;).empty();
 
-    if(currentScene.img !== undefined) {
-        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
-    }
+    setup.event.loadImage(currentScene.img);
     
-    $(&quot;#scene-container&quot;).wiki(setup.parseText(currentScene.txt));
+    setup.event.loadText(currentScene.txt);
 
-    let sceneChoices = currentScene.choice;
-
-    for(let i = 0; i &lt; sceneChoices.length; i++){
-        const choice = sceneChoices[i];
-        if(choice.nextPassage){
-            $(&quot;#choices-container&quot;).wiki(`
-            &lt;&lt;link &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
-                &lt;&lt;Play &quot;${choice.nextPassage}&quot;&gt;&gt;
-            &lt;&lt;/link&gt;&gt;&lt;br&gt;`);
-        } else {
-            $(&quot;#choices-container&quot;).wiki(`
-            &lt;&lt;link &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
-            &lt;&lt;run setup.event.continue(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;
-            &lt;&lt;/link&gt;&gt;&lt;br&gt;`);
-        }
-    }
+    setup.event.loadChoice(currentScene.choice);
 
     if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
         setup.event.data[sceneKey].action(State.variables.pc);
@@ -1725,33 +1916,11 @@ setup.event.continue = function(sceneKey) {
 
     $(&quot;#choices-container&quot;).empty();
 
-    if(currentScene.img !== undefined) {
-         $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${currentScene.img}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
-    }
+    setup.event.loadImage(currentScene.img);
 
-    if(currentScene.txt){
-        $(&quot;#scene-container&quot;).wiki(setup.parseText(currentScene.txt));
-    } else {
-        $(&quot;#scene-container&quot;).wiki(setup.parseText(`[b]There&#39;s no text in this scene ${sceneKey}![/b]`));
-    }
-    
+    setup.event.loadText(currentScene.txt);
 
-    let sceneChoices = currentScene.choice;
-
-    for(let i = 0; i &lt; sceneChoices.length; i++){
-        const choice = sceneChoices[i];
-        if(choice.nextPassage){
-            $(&quot;#choices-container&quot;).wiki(`
-            &lt;&lt;link &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
-                &lt;&lt;Play &quot;${choice.nextPassage}&quot;&gt;&gt;
-            &lt;&lt;/link&gt;&gt;&lt;br&gt;`);
-        } else {
-            $(&quot;#choices-container&quot;).wiki(`
-            &lt;&lt;link &quot;${sceneChoices[i].txt}&quot;&gt;&gt;
-            &lt;&lt;run setup.event.continue(&#39;${sceneChoices[i].next}&#39;)&gt;&gt;
-            &lt;&lt;/link&gt;&gt;&lt;br&gt;`);
-        }
-    }
+    setup.event.loadChoice(currentScene.choice)
 
     if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
         setup.event.data[sceneKey].action(State.variables.pc);
@@ -1767,12 +1936,66 @@ setup.event.continue = function(sceneKey) {
     });
 }
 
+setup.event.loadChoice = function(sceneChoices){
+    for(let i = 0; i &lt; sceneChoices.length; i++){
+        const choice = sceneChoices[i];
+        const temp = State.temporary;
+
+        if(typeof choice.req === &quot;function&quot;){
+            if(choice.req() === false){
+                continue;
+            }
+        }
+
+        let action = &quot;&quot;;
+        let sceneKey = temp.sceneData[temp.sceneLevel];
+
+        if(choice.nextPassage){
+            action += `&lt;&lt;Play &quot;${choice.nextPassage}&quot;&gt;&gt;`;
+        } else {
+            action += `&lt;&lt;run setup.event.continue(&#39;${choice.next}&#39;)&gt;&gt;`;
+        }
+
+        if(typeof choice.func === &quot;function&quot;){
+            action += `&lt;&lt;run setup.event.data[&quot;${sceneKey}&quot;].choice[${i}].func()&gt;&gt;`;
+        }
+
+        $(&quot;#choices-container&quot;).wiki(`&lt;&lt;link &quot;${choice.txt}&quot;&gt;&gt;${action}&lt;&lt;/link&gt;&gt;`);
+
+        $(&quot;#choices-container&quot;).wiki
+
+        $(&quot;#choices-container a&quot;).last().addClass(&quot;prevent-select&quot;);
+    }
+}
+
+setup.event.loadImage = function(path){
+    if(path !== undefined || path === &quot;&quot;) {
+        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${path}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
+        $(&quot;#scene-container img&quot;).attr(&quot;draggable&quot;, false);
+    }
+}
+
+setup.event.loadText = function(text){
+    const temp = State.variables;
+
+    if(text){
+        $(&quot;#scene-container&quot;).wiki(setup.parseText(text));
+    } else {
+        $(&quot;#scene-container&quot;).wiki(setup.parseText(
+            `[b]There&#39;s no text in this scene ${temp.sceneData[temp.sceneLevel]}![/b]`
+        ));
+    }
+}
+
+// USED TO LOAD EVENTS
 Macro.add(&quot;Event&quot;, {
     handler: function () {
         let eventCode = this.args[0];
-        setup.log.info(`Loading event ${eventCode}`);
+
+        setup.log.info(`Loading event ${eventCode}...`);
+
         if (Story.has(eventCode + &quot;-Data&quot;)) {
-            setup.log.success(`Event ${eventCode} loaded successfully`);
+            setup.log.success(`Event ${eventCode} loaded successfully!`);
             State.variables.event.code = eventCode;
             Engine.play(&quot;Debug-Scene&quot;);
         } else {
@@ -2044,6 +2267,11 @@ _totalStat = {
     luck: setup.entity.stat.total($pc.luck)
 }
 &gt;&gt;
+
+&lt;div style=&quot;width: 50vw;&quot;&gt;
+
+&lt;img id=&quot;char-dialog-pc-portait&quot; src=&quot;&quot; width=&quot;100&quot;&gt;
+
 Name : &lt;&lt;= $pc.name&gt;&gt;
 Race : &lt;&lt;= setup.race[$pc.race].name&gt;&gt;
 Gender : &lt;&lt;= $pc.gender&gt;&gt;
@@ -2105,7 +2333,14 @@ Left Accessory : &lt;&lt;= $pc.gear.lAcc&gt;&gt;
 
 Active : &lt;&lt;= $pc.skill.active&gt;&gt;
 Passive : &lt;&lt;= $pc.skill.passive&gt;&gt;
-Innate : &lt;&lt;= $pc.skill.innate&gt;&gt;</tw-passagedata><tw-passagedata pid="32" name="Inventory" tags="dialog nobr" position="1250,700" size="200,100">&lt;div id=&quot;inventory-item-view&quot;&gt;
+Innate : &lt;&lt;= $pc.skill.innate&gt;&gt;
+&lt;/div&gt;
+&lt;&lt;done&gt;&gt;
+&lt;&lt;run
+const path = `assets/images/pc/portrait/${State.variables.pc.img}.jpg`;
+$(&quot;#char-dialog-pc-portait&quot;).attr(&quot;src&quot;, path);
+&gt;&gt;
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="32" name="Inventory" tags="dialog nobr" position="1250,700" size="200,100">&lt;div id=&quot;inventory-item-view&quot;&gt;
 &lt;/div&gt;
 
 &lt;div id=&quot;inventory&quot;&gt;
@@ -2233,7 +2468,8 @@ setup.staticNPCDat = {
         imgFull: &quot;assets/images/npc/static/S001-full.jpg&quot;,
         imgPort: &quot;assets/images/npc/static/S001-port.jpg&quot;,
     }
-}&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="34" name="PRand-NPC-Data" tags="data" position="1250,275" size="200,100">&lt;&lt;script&gt;&gt;
+}
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="34" name="PRand-NPC-Data" tags="data" position="1250,275" size="200,100">&lt;&lt;script&gt;&gt;
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="35" name="HRand-NPC-Data" tags="data" position="1500,275" size="200,100">&lt;&lt;script&gt;&gt;
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="36" name="Game-Death" tags="dialog" position="1750,450" size="200,100">!!! You are dead
 
@@ -2381,7 +2617,7 @@ setup.inv.equip = function(entity, selectedIndex) {
     }
 }
 
-setup.inv.use = function(entity, selectedIndex) {
+setup.inv.use = function(entity, selectedIndex, amount = 1) {
     if(entity === undefined) return;
 
     if(!State.temporary.selectedIndex){
@@ -2390,16 +2626,16 @@ setup.inv.use = function(entity, selectedIndex) {
     }
 
     let id = entity.inventory[selectedIndex].id;
-    if(setup.item[id].use){
+    if(typeof setup.item[id].use === &quot;function&quot;){
         setup.item[id].use(entity);
-        entity.inventory[selectedIndex].amount -= 1;
+        
     } else {
         setup.log.info(&quot;You can&#39;t use this item!&quot;);
     }
 }
 
 // Removes an item from the inventory of an entity.
-setup.inv.remove = function(entity, selectedIndex) {
+setup.inv.remove = function(entity, selectedIndex, amount = 1) {
     if(entity === undefined) return;
 
     if(!State.temporary.selectedIndex){
@@ -2442,7 +2678,7 @@ setup.ui.inv = function() {
 
         let id = vars.pc.inventory[index].id;
         div.append(`
-            [${parseInt(index) + 1}] ${setup.item[id].name}&lt;br&gt;
+            &lt;span class=&quot;prevent-select&quot;&gt;[${parseInt(index) + 1}] ${setup.item[id].name}&lt;/span&gt;&lt;br&gt;
         `)
 
         $(&quot;#inventory&quot;).append(div);
@@ -2452,7 +2688,6 @@ setup.ui.inv = function() {
 
 setup.ui.invItem = function(selectedIndex) {
     const vars = State.variables;
-    console.log(&quot;Hello&quot;);
     if(selectedIndex &lt; 0) return;
     
     $(&quot;#inventory-item-view&quot;).empty();
@@ -2462,7 +2697,7 @@ setup.ui.invItem = function(selectedIndex) {
     let id = vars.pc.inventory[selectedIndex].id;
 
     if(setup.item[id].img !== &quot;&quot;){
-        div.append(`&lt;img src=&quot;${setup.item[id].img}&quot;&gt;&lt;/img&gt;&lt;br&gt;`);
+        div.append(`&lt;img src=&quot;${setup.item[id].img}&quot;width=&quot;75&quot;&gt;&lt;/img&gt;&lt;br&gt;`);
     }
 
     div.append(`
@@ -2515,7 +2750,7 @@ setup.area.check = function(area) {
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="Main-Menu" tags="nobr" position="1825,1200" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
 &lt;div class=&quot;menu-container&quot;&gt;
-	&lt;div class=&quot;menu-bg-artwork&quot; style=&quot;background-image: url(&#39;assets/images/ui/background_art1.png&#39;);&quot;&gt;&lt;/div&gt;
+	&lt;div class=&quot;menu-bg-artwork&quot; style=&quot;background-image: url(&#39;assets/images/ui/illustration/background_art1.jpg&#39;);&quot;&gt;&lt;/div&gt;
 	&lt;div class=&quot;menu-smoke-layer&quot;&gt;
 		&lt;div class=&quot;mist-cloud cloud-1&quot;&gt;&lt;/div&gt;
 		&lt;div class=&quot;mist-cloud cloud-2&quot;&gt;&lt;/div&gt;
@@ -2526,26 +2761,26 @@ setup.area.check = function(area) {
 	&lt;div class=&quot;menu-scroll-wrap&quot;&gt;
 		&lt;div class=&quot;menu-inner-wrap&quot;&gt;
 			&lt;header class=&quot;menu-header&quot;&gt;
-				&lt;img src=&quot;assets/images/ui/ui_logo.png&quot; id=&quot;displayTitle-logo&quot; alt=&quot;The Realm of Great Wildness&quot;&gt;
+				&lt;img src=&quot;assets/images/ui/ui_logo.png&quot; id=&quot;displayTitle-logo&quot; alt=&quot;The Realm of Great Wildness&quot; class=&quot;prevent-select&quot; draggable=&quot;false&quot;&gt;
 			&lt;/header&gt;
 
 			&lt;nav class=&quot;menu-navigation&quot;&gt;
-				&lt;div class=&quot;btn-primary&quot;&gt;
+				&lt;div class=&quot;btn-primary&quot; class=&quot;prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Start&quot;&gt;&gt;
-						&lt;&lt;run setup.feat.sync()&gt;&gt;
 						&lt;&lt;run setup.start.init()&gt;&gt;
+                        &lt;&lt;run setup.feat.sync()&gt;&gt;
 						&lt;&lt;run setup.start.new()&gt;&gt;
 						&lt;&lt;Event &quot;S00001&quot;&gt;&gt;
 					&lt;&lt;/button&gt;&gt;
 				&lt;/div&gt;
 
-				&lt;div class=&quot;btn-secondary&quot;&gt;
+				&lt;div class=&quot;btn-secondary&quot; class=&quot;prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Continue&quot;&gt;&gt;
 						&lt;&lt;run UI.saves()&gt;&gt;
 					&lt;&lt;/button&gt;&gt;
 				&lt;/div&gt;
 
-				&lt;div class=&quot;btn-tertiary&quot;&gt;
+				&lt;div class=&quot;btn-tertiary&quot; class=&quot;prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Settings&quot;&gt;&gt;
 						&lt;&lt;OpenPanel &quot;Settings&quot;&gt;&gt;
 					&lt;&lt;/button&gt;&gt;
@@ -2553,7 +2788,7 @@ setup.area.check = function(area) {
 			&lt;/nav&gt;
 		&lt;/div&gt;
 
-		&lt;div class=&quot;menu-extra-content&quot;&gt;
+		&lt;div class=&quot;menu-extra-content&quot; class=&quot;prevent-select&quot;&gt;
 			&lt;h3 class=&quot;extra-title&quot;&gt;InDev 0.23&lt;/h3&gt;
 			&lt;p class=&quot;extra-text&quot;&gt;Main menu now has proper UI.&lt;/p&gt;
 		&lt;/div&gt;
@@ -2568,7 +2803,7 @@ setup.area.check = function(area) {
 &lt;&lt;run
 $(document).on(&quot;:passagedisplay&quot;, function () {
     if ($(&quot;.menu-bg-artwork&quot;).length) {
-        const imagePath = `assets/images/ui/background_art${setup.randInt(1, 8)}.png`;
+        const imagePath = `assets/images/ui/illustration/background_art${setup.randInt(1, 30)}.jpg`;
 
         $(&quot;.menu-bg-artwork&quot;).css(
             &quot;background-image&quot;,
@@ -2587,7 +2822,8 @@ $(document).on(&quot;:passagedisplay&quot;, function () {
 
 &lt;!--
 [[Main-Menu]] 
---&gt;</tw-passagedata><tw-passagedata pid="46" name="S00002-Data" tags="" position="2425,450" size="100,100">&lt;&lt;script&gt;&gt;
+--&gt;</tw-passagedata><tw-passagedata pid="46" name="S00002-Data" tags="" position="2425,450" size="100,100">&lt;!-- Start Part 2 - Rebirth --&gt;
+&lt;&lt;script&gt;&gt;
 setup.event.data = {
 	&quot;scene1&quot;: {
 		img: &quot;assets/images/event/S00002/1.jpg&quot;,
@@ -2643,15 +2879,39 @@ setup.event.data = {
 
 			It hurts too much. You cannot stop yourself from crying.`,
         choice: [
-			{ txt: &quot;continue&quot;, next: &quot;end&quot; }
+			{ txt: &quot;continue&quot;, next: &quot;scene7&quot; }
 		]
 	},
+	&quot;scene7&quot;: {
+		txt: `The pain begins to fade.
+		
+		Your thoughts become quieter.
+		
+		The memories of the person you once were are almost completely gone.
+		
+		There is only one thing left...
+		
+		A new life.`,
+		choice: [
+			{ txt: &quot;continue&quot;, next: &quot;passage&quot;, nextPassage:&quot;Character-Creation-2&quot;}
+		]
+	}
 };
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="47" name="Character-Creation-1" tags="" position="1825,1350" size="200,100">Points : &lt;&lt;= $featScore&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="47" name="Character-Creation-1" tags="nobr" position="1475,1700" size="200,100">&lt;&lt;run setup.start.new()&gt;&gt;
 
-&lt;&lt;button &quot;Continue&quot;&gt;&gt;
-	&lt;&lt;Event &quot;S00002&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="48" name="Feat-Data" tags="data" position="1500,25" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;include &quot;Char-Creation-Data&quot;&gt;&gt;
+
+&lt;div class=&quot;realm-header&quot;&gt;
+  &lt;span class=&quot;header-title&quot;&gt;Incarnation&lt;/span&gt;
+  &lt;span class=&quot;points-badge&quot;&gt;
+    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= $featScore&gt;&gt;&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;creation-body&quot;&gt;
+  &lt;&lt;set _passageName = &quot;CreationContent&quot;&gt;&gt;
+  &lt;&lt;include &quot;CreationContent&quot;&gt;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="48" name="Feat-Data" tags="data" position="1500,25" size="200,100">&lt;&lt;script&gt;&gt;
 setup.feat.data = {
     1001: {
         name: &quot;Age 20&quot;,
@@ -2715,7 +2975,22 @@ Empty Slot
 
 &lt;br&gt;&lt;br&gt;
 
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="50" name="Setting-Data" tags="data" position="1750,25" size="200,100"></tw-passagedata><tw-passagedata pid="51" name="Character-Creation-2" tags="" position="1825,1500" size="200,100"></tw-passagedata><tw-passagedata pid="52" name="Text-Parser--Logic" tags="logic" position="2750,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="50" name="Setting-Data" tags="data" position="1750,25" size="200,100"></tw-passagedata><tw-passagedata pid="51" name="Character-Creation-2" tags="" position="1475,1850" size="200,100">Points : &lt;&lt;= $featScore&gt;&gt;
+
+Who are you? &lt;&lt;textbox &quot;$pc.name&quot; &quot;&quot;&gt;&gt;
+
+Gender: 
+&lt;&lt;button &quot;Male&quot;&gt;&gt;
+
+&lt;&lt;/button&gt;&gt;
+
+Portait: 
+
+Innate Trait:
+
+&lt;&lt;button &quot;Continue&quot;&gt;&gt;
+	&lt;&lt;Play &quot;Debug Passage&quot;&gt;&gt;
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="52" name="Text-Parser--Logic" tags="logic" position="2750,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.parseText = function(text) {
     let result = &quot;&quot;;
 
@@ -2745,6 +3020,9 @@ setup.parseText = function(text) {
 
     // DIALOG TAG
     result = setup.parseDialog(result);
+
+    // MULT TAG
+    result = setup.parseMult(result);
     
     return result;
 };
@@ -2829,6 +3107,143 @@ setup.parseParam = function(text){
     }
 
     return text;
+}
+
+setup.parseMult = function(text) {
+    const regex = /\[mult(?:\s+(.*?))?\](.*?)\[\/mult\]/g;
+
+    const match = regex.exec(text);
+
+    if (!match) {
+        return text;
+    }
+
+    let params = match[1]?.split(/\s+/) ?? [];
+    let resultClass = params.join(&quot; &quot;);
+
+    for (const param of params) {
+        if (setup.textTag[param]) {
+            resultClass = resultClass.replace(param, setup.textTag[param].class);
+        }
+    }
+
+    return text.replace(regex, `&lt;span class=&quot;${resultClass}&quot;&gt;$2&lt;/span&gt;`);
+};
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="53" name="S00003-Data" tags="" position="2550,450" size="100,100">&lt;&lt;script&gt;&gt;
+setup.event.data = {
+
+};
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="54" name="Fate-Data" tags="data" position="1750,275" size="200,100">&lt;&lt;script&gt;&gt;
+
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="55" name="CardWidgets" tags="logic" position="3075,150" size="200,100">&lt;&lt;script&gt;&gt;
+Macro.add(&quot;CardPopulate&quot;, {
+    handler: function () {
+        let category = this.args[0];
+
+        switch(category){
+            case &quot;race&quot;:
+                setup.cardpop.race();
+                break;
+            case &quot;fate&quot;:
+                setup.cardpop.fate();
+                break;
+            default:
+                System.log.warning(`Card populate error: ${category} doesnt exist!`);
+                break;
+        }
+    }
+});
+
+setup.cardpop = {
+    race: function(){
+        const arr = setup.charCreation1.race;
+
+        for(const item of arr){
+            this.populate(
+                State.variables.pc.race, 
+                item[0], item[1], setup.race[item[0]].name, setup.race[item[0]].description, &quot;ccRace&quot;, &quot;pc.race&quot;
+            );
+        }
+    },
+    fate: function(){
+        const arr = setup.charCreation1.fate;
+
+        for(const item of arr){
+            this.populate(
+                State.variables.pc.fate, item[0], item[1], item[0], item[2], &quot;ccFate&quot;, &quot;pc.fate&quot;
+            );
+        }
+    },
+    populate: function(currentValue, value, cost = 0, name = &quot;&quot;, description = &quot;&quot;, cardParent = &quot;&quot;, path){
+        const vars = State.variables;
+
+        const div = $(&quot;&lt;div&gt;&quot;);
+        div.addClass(&quot;fate-card&quot; + (currentValue === value ? &quot; selected&quot; : &quot;&quot;));
+
+        div.append(`
+            &lt;div class=&quot;card-title&quot;&gt;
+                &lt;span class=&quot;card-title&quot;&gt;${name}&lt;/span&gt;
+                &lt;span class=&quot;card-cost&quot;&gt;${cost}&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card-desc&quot;&gt;${description}&lt;/div&gt;
+        `);
+
+        div.wiki(`
+            &lt;&lt;button &quot;Select&quot;&gt;&gt;
+                &lt;&lt;set $${path} = &quot;${value}&quot;&gt;&gt;
+                &lt;&lt;replace &quot;#creation-body&quot;&gt;&gt;
+                    &lt;&lt;include &quot;CreationContent&quot;&gt;&gt;
+                &lt;&lt;/replace&gt;&gt;
+            &lt;&lt;/button&gt;&gt;
+        `);
+
+        $(`#${cardParent}`).append(div);
+    }
+}
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="56" name="CreationContent" tags="nobr" position="1725,1850" size="200,100">&lt;div class=&quot;realm-section-title&quot;&gt;Race&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  This choice will decide the race you will be born from. In the continent of #####, there&#39;s only a single dominant intelligent race, so choose wisely before continuing.
+&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 1;&quot; id=&quot;ccRace&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;realm-section-title&quot;&gt;Gender&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 2;&quot; id=&quot;ccGender&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;realm-section-title&quot;&gt;Fate&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  This choice will decide the direction of your path on this continent. This would greatly affect the choices you can make or the events you might encounter in this realm. Having better fate might give you more years to live in this realm in peril.
+&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 4;&quot; id=&quot;ccFate&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;action-container&quot;&gt;
+  &lt;&lt;button &quot;Continue&quot;&gt;&gt;
+      &lt;&lt;Event &quot;S00002&quot;&gt;&gt;
+  &lt;&lt;/button&gt;&gt;
+&lt;/div&gt;
+
+&lt;&lt;done&gt;&gt;
+&lt;&lt;CardPopulate &quot;fate&quot;&gt;&gt;
+&lt;&lt;CardPopulate &quot;race&quot;&gt;&gt;
+&lt;&lt;run setup.cardpop.populate($pc.gender, &quot;male&quot;, 0, &quot;Male&quot;, &quot;Born under the Yang aspect. Direct and resilient constitution.&quot;, &quot;ccGender&quot;, &quot;pc.gender&quot;)&gt;&gt; 
+&lt;&lt;run setup.cardpop.populate($pc.gender, &quot;female&quot;, 0, &quot;Female&quot;, &quot;Born under the Yin aspect. Adaptable and sharp perception.&quot;, &quot;ccGender&quot;, &quot;pc.gender&quot;)&gt;&gt; 
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="57" name="Char-Creation-Data" tags="data" position="1725,1700" size="200,100">&lt;&lt;script&gt;&gt;
+setup.charCreation1 = {
+    race: [
+        [&quot;101&quot;, 0],
+        [&quot;102&quot;, 2]
+    ],
+    fate: [
+        [&quot;Unlucky&quot;, 0, &quot;You are fated to be unlucky in this life.&quot;],
+        [&quot;Fateless&quot;, 0, &quot;You are someone who does not carry fate and your life is not tied by destiny.&quot;],
+        [&quot;Ordinary&quot;, 0, &quot;You are born into this realm just to be ordinary.&quot;],
+        [&quot;Favored by Heavens&quot;, 50, &quot;You are someone favored by the heavens themselves. But someone with this immense fate must be careful in their actions. Beings angered by heaven will try to hunt fated beings like you.&quot;],
+    ]
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
