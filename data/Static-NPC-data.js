@@ -1,4 +1,5 @@
-setup.staticNPC = {
+setup.staticNPC = {};
+setup.staticNPC.data = {
     "S001": {
         name: "Celeste Brown",
         race: 101,
@@ -38,11 +39,11 @@ setup.staticNPC = {
             }
         },
 
-        str: [1, 1],
-        con: [1, 1],
-        int: [1, 1],
-        agi: [1, 1],
-        per: [1, 1],
+        str: [1, []],
+        con: [1, []],
+        int: [1, []],
+        agi: [1, []],
+        per: [1, []],
         sanity: 100,
         wisdom: 1,
         comprehension: 1,
@@ -88,11 +89,11 @@ setup.staticNPC = {
             }
         },
 
-        str: [1, 1],
-        con: [1, 1],
-        int: [1, 1],
-        agi: [1, 1],
-        per: [1, 1],
+        str: [1, []],
+        str: [1, []],
+        str: [1, []],
+        str: [1, []],
+        str: [1, []],
         sanity: 100,
         wisdom: 1,
         comprehension: 1,
@@ -102,7 +103,7 @@ setup.staticNPC = {
 }
 
 
-setup.staticNPCDat = {
+setup.staticNPC.asset = {
     "S001":{
         background: "Standard static npc background information!",
         imgFull: "assets/images/npc/static/S001-full.jpg",
