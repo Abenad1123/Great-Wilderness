@@ -6,8 +6,10 @@ setup.trait = {
         description: "You are born with bones thicker than normal",
         img: "",
         modifier: {
-            str: 1,
-            con: 5
+            normal: {
+                str: 1,
+                con: 5
+            }
         }
     },
     1002: {
@@ -17,7 +19,9 @@ setup.trait = {
         description: "You are born with eyes that see farther than the ordinary",
         img: "",
         modifier: {
-            per: 5,
+            normal: {
+                per: 5
+            } 
         }
     },
     1003: {
@@ -27,22 +31,41 @@ setup.trait = {
         description: "Your feet are more flexible and possess more control",
         img: "",
         modifier: {
-            agi: 3,
-            per: 3
+            normal: {
+                agi: 3,
+                per: 3
+            }
         }
     },
-    1003: {
+    1004: {
         name: "Perfect Genes",
         type: "Innate",
         rank: "Rare",
         description: "You are born with genes of high calibre far suprassing the ordinary giving far more power and strength",
         img: "",
         modifier: {
-            str: 5,
-            con: 5,
-            int: 5,
-            agi: 5,
-            per: 5
+            normal: {
+                str: 5,
+                con: 5,
+                int: 5,
+                agi: 5,
+                per: 5
+            }
         }
-    }
+    },
+    1005: {
+        name: "Marked by the Heavens",
+        type: "Innate",
+        rank: "Mythical",
+        description: "Your very existance is marked by the heaven's itself. Granting you immense power beyond a mortal's comprehension.",
+        img: "",
+        modifier: {
+            normal:{
+                luck: 10
+            },
+        },
+        effect: {
+
+        }
+    },
 }

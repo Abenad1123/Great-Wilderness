@@ -46,6 +46,51 @@ setup.hrandNPC.data = {
         sanity: [75, 100],
         wisdom: [0.5, 1.1],
         luck: [0.7, 1.2]
+    },
+     "H999": {
+        identity: "Training Dummy",
+        name: {
+            neutral: ["Dummy 1", "Dummy 2", "Dummy 3"]
+        },
+        race: 101,
+        gender: ["None"],
+        age: [0, 0],
+        lifespan: [1000, 1000],
+
+        title: [9999],
+        status: [],
+
+        gear: {
+            head: null, chest: null, back: null,
+            leg: null, feet: null, rArm: null,
+            lArm: null, rAcc: null, lAcc: null
+        },
+        inventory: [],
+
+        trait: {
+            innate: [],
+            acquired: [],
+            temporary: []
+        },
+        skill: {
+            combat: {
+                active: [1002],
+                passive: []
+            },
+            profession: {
+                active: [],
+                passive: []
+            }
+        },
+
+        str: [1, 1],
+        con: [1, 1],
+        int: [1, 1],
+        agi: [1, 1],
+        per: [1, 1],
+        sanity: [100, 100],
+        wisdom: [0,0],
+        luck: [0,0]
     }
 }
 

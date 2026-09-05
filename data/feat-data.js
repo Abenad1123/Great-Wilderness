@@ -4,7 +4,7 @@ setup.feat.data = {
         description: "Reach the age of 20 years",
         value: 10,
         condition: function(){
-            return State.variables.pc.age.year >= 20;
+            return State.variables.game.pc.age.year >= 20;
         }
     },
     1002: {
@@ -12,7 +12,7 @@ setup.feat.data = {
         description: "Reach the age of 30 years",
         value: 20,
         condition: function(){
-            return State.variables.pc.age.year >= 30;
+            return State.variables.game.pc.age.year >= 30;
         }
     },
     1003: {
@@ -20,7 +20,7 @@ setup.feat.data = {
         description: "Reach the age of 40 years",
         value: 25,
         condition: function(){
-            return State.variables.pc.age.year >= 40;
+            return State.variables.game.pc.age.year >= 40;
         }
     },
     1004: {
@@ -28,7 +28,7 @@ setup.feat.data = {
         description: "Reach the age of 50 years",
         value: 30,
         condition: function(){
-            return State.variables.pc.age.year >= 50;
+            return State.variables.game.pc.age.year >= 50;
         }
     }
 }
