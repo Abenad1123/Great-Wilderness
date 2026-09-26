@@ -356,6 +356,85 @@ button {
 		padding: 14px 20px !important;
 		font-size: 0.95rem !important;
 	}
+}
+
+@media screen and (max-width: 600px) {
+	.line:has(> img) {
+		grid-template-columns: 90px 1fr;
+		column-gap: 14px;
+	}
+
+	.line:has(> img) > img {
+        width: 90px;
+        height: 90px;
+    }
+
+	.line:has(> img) > span:nth-of-type(1) {
+		font-size: 0.8rem;
+	}
+
+	.line:has(> img) > span:nth-of-type(2) {
+		font-size: 0.9rem;
+		line-height: 1.5;
+	}
+}
+
+/* ─── CHARACTER DIALOGUE ─────────────────────── */
+
+.line:has(> img) {
+	display: grid;
+	grid-template-columns: 130px 1fr;
+	grid-template-rows: auto 1fr;
+	column-gap: 20px;
+	margin-bottom: 25px;
+	padding: 15px 18px;
+
+	background: rgba(15, 12, 12, 0.65);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-left: 3px solid rgba(212, 175, 55, 0.6);
+	border-radius: 4px;
+
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+	box-sizing: border-box;
+}
+
+/* Character portrait */
+.line:has(> img) > img {
+	grid-column: 1;
+	grid-row: 1 / 3;
+
+	width: 130px;
+	height: 130px;
+	object-fit: cover;
+
+	border: 1px solid rgba(212, 175, 55, 0.35);
+	border-radius: 3px;
+}
+
+/* Character name */
+.line:has(> img) > span:nth-of-type(1) {
+	grid-column: 2;
+	grid-row: 1;
+
+	display: block;
+	margin-bottom: 6px;
+
+	color: #d4af37;
+	font-size: 0.9rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+}
+
+/* Dialogue text */
+.line:has(> img) > span:nth-of-type(2) {
+	grid-column: 2;
+	grid-row: 2;
+
+	display: block;
+
+	color: var(--text-main);
+	font-size: 1rem;
+	line-height: 1.6;
 }</style><script role="script" id="twine-user-script" type="text/twine-javascript">Config.history.controls = false;
 Config.history.maxStates = 1;
 Config.saves.maxSlotSaves = 5;
@@ -494,7 +573,7 @@ setup.advanceTimeMath = function(timeObject, tick) {
 };
 
 setup.setPortrait = function(entity){
-    let vars = State.variables;
+    let vars = State.variables.game;
     if(entity === vars.pc){
         if(entity.img === ""){
             setup.log.warning("PC doesn't have a portrait!");
@@ -521,6 +600,28 @@ setup.setPortrait = function(entity){
 setup.randInt =  function(min, max) {
     let result = Math.floor(Math.random() * (max - min + 1) ) + min;
     return result;
+}
+
+setup.setVal = function(obj, path, value) {
+    const parts = path.split(".");
+    let current = obj;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+        current = current[parts[i]];
+    }
+
+    current[parts[parts.length - 1]] = value;
+}
+
+setup.getVal = function(obj, path) {
+    const parts = path.split(".");
+    let current = obj;
+
+    for (let i = 0; i < parts.length - 1; i++) {
+        current = current[parts[i]];
+    }
+
+   return current[parts[parts.length - 1]];
 }
 
 setup.randomString = function(length = 8) {
@@ -605,8 +706,9 @@ setup.start.init = function(){
 
     vars.event = {
         code: "",
+        scene: "",
         data: {},
-        flags: {}
+        flags: {},
     }
 
     vars.battle = {
@@ -658,7 +760,7 @@ setup.start.new = function() {
     vars.pc = {
         name: null,
         img: null,
-        race: null,
+        race: 101,
         fate: null,
         gender: null,
         age: {
@@ -718,29 +820,30 @@ setup.start.new = function() {
         potential: [0, []],
         luck: [0, []],
         
-        power: 0,
-        evasion: 0,
-        atkSpeed: 0,
+        power: [0, []],
+        evasion: [0, []],
+        atkSpeed: [0, []],
+        defense: [0, []],
 
         proficiency: {
             weapon: {
-                sword: 0,
-                spear: 0,
-                axe: 0,
-                knife: 0,
-                hand: 0,
-                feet: 0
+                sword: [0, []],
+                spear: [0, []],
+                axe: [0, []],
+                knife: [0, []],
+                hand: [0, []],
+                feet: [0, []]
             }
         },
 
         talent: {
             weapon: {
-                sword: 1,
-                spear: 1,
-                axe: 1,
-                knife: 1,
-                hand: 1,
-                feet: 1
+                sword: [0, []],
+                spear: [0, []],
+                axe: [0, []],
+                knife: [0, []],
+                hand: [0, []],
+                feet: [0, []]
             }
         },
 
@@ -753,11 +856,11 @@ setup.start.new = function() {
         },
 
         resistance: {
-            bleed: 0,
-            poison: 0,
-            fire: 0,
-            energy: 0,
-            curse: 0
+            bleed: [0, []],
+            poison: [0, []],
+            fire: [0, []],
+            energy: [0, []],
+            curse: [0, []]
         },
 
         body: {
@@ -1143,8 +1246,7 @@ Points : &lt;&lt;= $game.featScore&gt;&gt;
 &lt;&lt;include &quot;Area--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Text-Parser--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Battle--Logic&quot;&gt;&gt;
-
-&lt;&lt;include  &quot;CardWidgets&quot;&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo2.png&quot; id=&quot;displayTitle-logo&quot;&gt;
+</tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo2.png&quot; id=&quot;displayTitle-logo&quot;&gt;
 &lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.25.0 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,1300" size="200,100">&lt;div id=&quot;battle-log-card&quot;&gt;
 	
 &lt;/div&gt;
@@ -1238,7 +1340,8 @@ setup.item = {
     },
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="7" name="Race-Data" tags="data" position="1000,150" size="200,100">&lt;&lt;script&gt;&gt;
-setup.race = {
+setup.race = {};
+setup.race.data = {
     101: {
         name: &quot;Human&quot;,
         description: &quot;Humans are said to be the dominant race of this continent. It said they possess incredible will to innovate and incredible will to survive&quot;,
@@ -1274,8 +1377,28 @@ setup.race = {
             per: 0.3,
             regen: 0
         }
+    },
+    103: {
+        name: &quot;&quot;,
+        description: &quot;&quot;,
+        lifespan: 0,
+        genders: [],
+        multiplier: {
+        },
+        stat: {
+        }
+    },
+};
+
+setup.race.asset = {
+    &quot;set0&quot;:{
+        scope: [101, 102],
+        portrait: {
+            male: [&quot;m1&quot;, &quot;m2&quot;, &quot;m3&quot;, &quot;m4&quot;],
+            female: [&quot;f1&quot;, &quot;f2&quot;, &quot;f3&quot;]
+        }
     }
-}
+};
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="8" name="Title-Data" tags="data" position="1250,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.title = {
     1001: {
@@ -1304,6 +1427,28 @@ setup.title = {
     }
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="9" name="Status-Data" tags="data" position="1750,150" size="200,100">&lt;&lt;script&gt;&gt;
+setup.status = {};
+setup.status.data = {
+    101: {
+        name: &quot;Poisoned&quot;,
+        description: &quot;&quot;,
+        minLevel: 1,
+        maxLevel: 5,
+        tag: [],
+        effect: function(entity, level){
+            return (Math.min(1, entity.hps[0] * 0.01) * level) - entity.resistance.poison
+        }
+    }
+}
+
+
+/*
+STATUS TAGS
+
+control
+tick
+
+*/
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="10" name="Trait-Data" tags="data" position="1500,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.trait = {
     1001: {
@@ -1532,7 +1677,7 @@ $game.pc = {
         year: 18
     },
     // THE MAXIMUM LIMIT AGE CAN REACH
-    lifespan: setup.race[101].lifespan + setup.randInt(1, 10),
+    lifespan: setup.race.data[101].lifespan + setup.randInt(1, 10),
     // DEAD OR ALIVE
     state: &quot;alive&quot;,
 
@@ -1630,7 +1775,11 @@ $game.pc = {
         }
     },
 
-    // HOW FAST THE STAT GROWS
+    technique: {
+        
+    },
+
+    // HOW FAST THE STAT GROWSs
     growth: {
         str: 1,
         con: 1,
@@ -1853,7 +2002,7 @@ setup.event.data = {
 		The gentle floating sensation is gone in a flash. A deafening rush of pressure fills your mind as a strange new gravity takes hold. You are plummeting now, pulled downward at a sickening speed straight toward the endless continents waiting below.
 		`,
 		choice: [
-			{ txt: &quot;continue&quot;, next: &quot;passage&quot;, nextPassage:&quot;Character-Creation-1&quot;},
+			{ txt: &quot;continue&quot;, nextPassage:&quot;Character-Creation-1&quot;},
 		]
 	}
 };
@@ -1862,57 +2011,112 @@ setup.event.data = {
 	&quot;Start&quot;: {
 		img: &quot;assets/images/event/S0000D/1.jpg&quot;,
 		txt: &quot;[b]Hello $name$[/b]&quot;,
-        choice: [
-			{ txt: &quot;Scene: Grant trait&quot;, next: &quot;Trait&quot; },
-			{ txt: &quot;Scene: Damage PC&quot;, next: &quot;Damage&quot; },
-			{ txt: &quot;Scene: Text Formatting&quot;, next: &quot;FormatText&quot; },
-			{ txt: &quot;Scene: Grant green aple x1&quot;, next: &quot;Grant&quot;},
-			{ txt: &quot;Scene: Dialog scene&quot;, next: &quot;dialog&quot;},
-			{ txt: &quot;Scene: This choice requires for the PC to have Thick Bones Trait!&quot;, next: &quot;req&quot;, 
-			  req: function(){
-				if(State.variables.game.pc.trait.innate.includes(1001)){
-					return true;
-				} else {
-					return false;
+        action: function(){
+            const vars = State.variables.game;
+			if(Object.keys(vars.event.flags).length &gt; 0){
+                if(vars.event.flags.killed.includes(&quot;H001&quot;)){
+                    setup.event.continue(&quot;Kill&quot;);
+                }
+            }
+		},
+        choice: [{ 
+				txt: &quot;Scene: Grant trait&quot;, 
+				next: &quot;Trait&quot; 
+			},{ 
+				txt: &quot;Scene: Damage PC&quot;, 
+				next: &quot;Damage&quot; 
+			},{ 
+				txt: &quot;Scene: Text Formatting&quot;, 
+				next: &quot;FormatText&quot; 
+			},{ 
+				txt: &quot;Scene: Grant green aple x1&quot;, 
+				next: &quot;Grant&quot;
+			},{ 
+				txt: &quot;Scene: Dialog scene&quot;, 
+				next: &quot;dialog&quot;
+			},{ 
+				txt: &quot;Scene: This choice requires for the PC to have Thick Bones Trait!&quot;, 
+				next: &quot;req&quot;, 
+			  	req: function(){
+					if(State.variables.game.pc.trait.innate.includes(1001))
+						return true;
+					else
+						return false;
 				}
-			}},
-			{ txt: &quot;Scene: This choice contains a function that runs a function without going to a scene!&quot;, next: &quot;Start&quot;,
+			},{ 
+				txt: &quot;Scene: This choice contains a function that runs a function without going to a scene!&quot;, 
+				next: &quot;Start&quot;,
 				func: function(){
 					setup.action.harm(State.variables.game.pc, 5);
 				}
-			},
-			{ txt: &quot;end scene&quot;, next: &quot;end&quot; },
-		]
+			},{ 
+				txt: &quot;Sneak enemy&quot;,
+				battle: {
+					target: &quot;H001&quot;,
+					initiator: &quot;pc&quot;,
+					type: &quot;Hrand&quot;,
+					approach: &quot;Sneak&quot;,
+				},
+                func: function(){
+                    const vars = State.variables.game;
+					vars.event.flags.killed = [];
+				}
+			},{ 
+				txt: &quot;end scene&quot;,
+				next: &quot;end&quot; 
+			}]
 	},
+    &quot;Kill&quot;: {
+        txt: &quot;Nice kill! I&#39;ve will reward you stick for that!&quot;,
+        action: function(entity){
+			setup.inv.grant(entity, 1001, 1);
+		},
+        choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
+    },
 	&quot;Damage&quot;: {
 		txt: &quot;You damage yourself&quot;,
 		action: function(entity){
 			setup.action.harm(entity, 5);
 		},
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;scene1&quot; }
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	},
 	&quot;Trait&quot;: {
 		txt: &quot;You&#39;ve received a trait! Wow that&#39;s amazing&quot;,
 		action: function(entity){
 			setup.entity.trait.grant(entity, 1001);
 		},
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	},
 	&quot;Grant&quot;: {
 		txt: &quot;You&#39;ve received a single stick!&quot;,
 		action: function(entity){
 			setup.inv.grant(entity, 1001, 1);
 		},
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; },
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	},
 	&quot;FormatText&quot;: {
 		txt: `[wiggle]Hello Wiggle World![/wiggle]\n
@@ -1924,24 +2128,33 @@ setup.event.data = {
 		[pulse]Hello Wiggle World![/pulse]\n
 		[rainbow]Hello Wiggle World![/rainbow]\n
 		[mult b wave][/mult]`,
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	},
 	&quot;dialog&quot;: {
 		txt: `[dialog S001 static]Hello World![/dialog]`,
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	},
 	&quot;req&quot;: {
 		txt: `[dialog S001 static]You must&#39;ve have the trait Thick Bones right![/dialog]`,
-		choice: [
-			{ txt: &quot;Go back to Start&quot;, next: &quot;Start&quot; },
-			{ txt: &quot;End test scene&quot;, next: &quot;end&quot; }
-		]
+		choice: [{ 
+				txt: &quot;Go back to Start&quot;, 
+				next: &quot;Start&quot; 
+			},{ 
+				txt: &quot;End test scene&quot;, 
+				next: &quot;end&quot; 
+		}]
 	}
 };
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="23" name="Debug-Area1" tags="area" position="2875,1200" size="100,100">&lt;&lt;button &quot;Area2&quot;&gt;&gt;
@@ -1968,38 +2181,19 @@ setup.event.start = function() {
     if(setup.event.data === undefined) return;
 
     const vars = State.variables.game;
-
-    vars.event.data = {};
-    vars.event.flags = {};
-
     const temp = State.temporary;
 
-    temp.sceneLevel = 0;
     temp.sceneData = Object.keys(setup.event.data);
 
-    let sceneKey = temp.sceneData[temp.sceneLevel];
-    let currentScene = setup.event.data[sceneKey];
-
+    if(vars.event.scene == &quot;&quot;){
+        vars.event.data = {};
+        vars.event.flags = {};
+        vars.event.scene = temp.sceneData[0];
+    }
+    
     $(&quot;#scene-container&quot;).empty();
 
-    setup.event.loadImage(currentScene.img);
-    
-    setup.event.loadText(currentScene.txt);
-
-    setup.event.loadChoice(currentScene.choice);
-
-    if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
-        setup.event.data[sceneKey].action(vars.pc);
-    }
-
-    requestAnimationFrame(() =&gt; {
-        requestAnimationFrame(() =&gt; {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: &quot;smooth&quot;
-            });
-        });
-    });
+    setup.event.loadScene();
 }
 
 setup.event.continue = function(sceneKey) {
@@ -2008,32 +2202,28 @@ setup.event.continue = function(sceneKey) {
     const vars = State.variables.game;
 
     if(sceneKey === &quot;end&quot;) {
-        vars.event = {
-            code: &quot;&quot;,
-            data: {},
-            flags: {}
-        }
+        setup.event.clear();
         $.wiki(&quot;&lt;&lt;goback&gt;&gt;&quot;);
         return;
     }
 
-    if(!State.temporary.sceneData.includes(sceneKey)){
-        setup.log.warning(`Scene ${sceneKey} doesn&#39;t exist in the event data`);
-        return;
+    vars.event.scene = sceneKey;
+    setup.event.loadScene();
+}
+
+setup.event.loadScene = function(){
+    const vars = State.variables.game;
+
+    if(Object.keys(setup.event.data).includes(vars.event.scene) == false){
+        setup.log.warning(`Scene ${vars.event.scene} doesnt exists in this event!`);
     }
 
-    const temp = State.temporary;
-
-    temp.sceneLevel = temp.sceneData.indexOf(sceneKey);
-    let currentScene = setup.event.data[sceneKey];
-
-    $(&quot;#choices-container&quot;).empty();
+    const currentScene = setup.event.data[vars.event.scene];
+    const sceneKey = vars.event.scene;
 
     setup.event.loadImage(currentScene.img);
-
     setup.event.loadText(currentScene.txt);
-
-    setup.event.loadChoice(currentScene.choice)
+    setup.event.loadChoice(currentScene.choice);
 
     if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
         setup.event.data[sceneKey].action(vars.pc);
@@ -2051,29 +2241,37 @@ setup.event.continue = function(sceneKey) {
 
 // USED TO LOAD CHOICES AND ITS LOGIC
 setup.event.loadChoice = function(sceneChoices){
-    const temp = State.temporary;
+    const vars = State.variables.game;
+
+    const sceneKey = vars.event.scene;
+
+    $(&quot;#choices-container&quot;).empty();
 
     if(sceneChoices.length === 0){
-        setup.log.warning(`There&#39;s no choices in this scene ${temp.sceneData[temp.sceneLevel]}!`);
+        setup.log.warning(`There&#39;s no choices in this scene ${sceneKey}!`);
         return;
     }
 
     for(let i = 0; i &lt; sceneChoices.length; i++){
         const choice = sceneChoices[i];
+        const nextSceneKey = choice.next;
 
         if(typeof choice.req === &quot;function&quot;){
-            if(choice.req() === false){
-                continue;
-            }
+            if(choice.req() === false) continue;
         }
 
         let action = &quot;&quot;;
-        let sceneKey = temp.sceneData[temp.sceneLevel];
 
         if(choice.nextPassage){
-            action += `&lt;&lt;Play &quot;${choice.nextPassage}&quot;&gt;&gt;`;
-        } else {
-            action += `&lt;&lt;run setup.event.continue(&#39;${choice.next}&#39;)&gt;&gt;`;
+            action += `&lt;&lt;Play &quot;${choice.nextPassage}&quot;&gt;&gt;&lt;&lt;run setup.event.clear()&gt;&gt;`;
+        } 
+        
+        if(choice.next){
+            action += `&lt;&lt;run $game.event.scene = &#39;${nextSceneKey}&#39;; setup.event.continue(&#39;${choice.next}&#39;)&gt;&gt;`;
+        }
+
+        if(choice.battle){
+            action += `&lt;&lt;run setup.battle.engage(&quot;${choice.battle.target}&quot;, &quot;${choice.battle.type}&quot;, &quot;${choice.battle.approach}&quot;, &quot;${choice.battle.initiator}&quot;)&gt;&gt;`;
         }
 
         if(typeof choice.func === &quot;function&quot;){
@@ -2083,6 +2281,17 @@ setup.event.loadChoice = function(sceneChoices){
         $(&quot;#choices-container&quot;).wiki(`&lt;&lt;link &quot;${choice.txt}&quot;&gt;&gt;${action}&lt;&lt;/link&gt;&gt;`);
 
         $(&quot;#choices-container a&quot;).last().addClass(&quot;prevent-select&quot;);
+    }
+}
+
+setup.event.clear = function(){
+    const vars = State.variables.game;
+
+    vars.event = {
+        code: &quot;&quot;,
+        scene: &quot;&quot;,
+        data: {},
+        flags: {},
     }
 }
 
@@ -2096,13 +2305,15 @@ setup.event.loadImage = function(path){
 
 // USED TO LOAD TEXT
 setup.event.loadText = function(text){
-    const temp = State.temporary;
+    const vars = State.variables.game;
+
+    const sceneKey = vars.event.scene;
 
     if(text){
         $(&quot;#scene-container&quot;).wiki(setup.parseText(text));
     } else {
         $(&quot;#scene-container&quot;).wiki(setup.parseText(
-            `[b]There&#39;s no text in this scene ${temp.sceneData[temp.sceneLevel]}![/b]`
+            `[b]There&#39;s no text in this scene ${sceneKey}![/b]`
         ));
     }
 }
@@ -2152,7 +2363,10 @@ setup.dataIndex = {
 };
 
 setup.entity.stat.calculate = function(entity, isNew = false) {
-    if(setup.entity.validate(entity)) return;
+    if(setup.entity.validate(entity)){
+        setup.log.warning(&quot;Entity doesnt exist!&quot;);
+        return;
+    }
 
     const vars = State.variables.game;
 
@@ -2180,12 +2394,14 @@ setup.entity.stat.calculate = function(entity, isNew = false) {
         key = key.toLowerCase();
         let prev = setup.volatileMax(entity[key]);
 
+        const raceMulti = setup.race.data[entity.race].multiplier;
+
         switch(key){
             case &quot;hps&quot;:
-                entity.hps[1] = (con + (str / 2)) * setup.race[entity.race].multiplier.hps;
+                entity.hps[1] = (con + (str / 2)) * raceMulti.hps;
                 break;
             case &quot;sta&quot;:
-                entity.sta[1] = ((con + (str / 2)) / 2) * setup.race[entity.race].multiplier.sta;
+                entity.sta[1] = ((con + (str / 2)) / 2) * raceMulti.sta;
                 break;
         }
 
@@ -2196,7 +2412,7 @@ setup.entity.stat.calculate = function(entity, isNew = false) {
     entity.power[0] = str + (agi / 4) + (con / 4);
     entity.atkSpeed[0] = agi + (per / 2);
     entity.evasion[0] = per + (agi / 2) + (int / 10);
-    entity.defense[0] = con / 10;
+    entity.defense[0] = (con / 10) + (str / 20);
 
     setup.ui.render.navigation();
     setup.log.info(`Calculated stat for ${entity.name}`);
@@ -2486,7 +2702,7 @@ _totalStat = {
 &lt;img id=&quot;char-dialog-pc-portait&quot; src=&quot;&quot; width=&quot;100&quot;&gt;
 
 Name : &lt;&lt;= $game.pc.name&gt;&gt;
-Race : &lt;&lt;= setup.race[$game.pc.race].name&gt;&gt;
+Race : &lt;&lt;= setup.race.data[$game.pc.race].name&gt;&gt;
 Gender : &lt;&lt;= $game.pc.gender&gt;&gt;
 
 Age : &lt;&lt;= $game.pc.age.year&gt;&gt;
@@ -3402,13 +3618,19 @@ setup.event.data = {
 		
 		A new life.`,
 		choice: [
-			{ txt: &quot;continue&quot;, next: &quot;passage&quot;, nextPassage:&quot;Character-Creation-2&quot;}
+			{ txt: &quot;continue&quot;, nextPassage:&quot;Character-Creation-2&quot;}
 		]
 	}
 };
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="47" name="Character-Creation-1" tags="nobr" position="1000,1500" size="200,100">&lt;&lt;run setup.start.new()&gt;&gt;
-
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="47" name="Character-Creation-1" tags="nobr" position="1000,1500" size="200,100">&lt;&lt;include &quot;CreationContent--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Char-Creation-Data&quot;&gt;&gt;
+
+&lt;&lt;run setup.start.new()&gt;&gt;
+
+&lt;&lt;set $game.cc = {}&gt;&gt;
+&lt;&lt;set $game.cc.list = []&gt;&gt;
+
+&lt;&lt;set _points = $game.featScore - setup.cardpop.totalUsage()&gt;&gt;
 
 &lt;div class=&quot;realm-header&quot;&gt;
   &lt;span class=&quot;header-title&quot;&gt;Incarnation&lt;/span&gt;
@@ -3417,10 +3639,44 @@ setup.event.data = {
   &lt;/span&gt;
 &lt;/div&gt;
 
+
 &lt;div id=&quot;creation-body&quot;&gt;
-  &lt;&lt;set _passageName = &quot;CreationContent&quot;&gt;&gt;
-  &lt;&lt;include &quot;CreationContent&quot;&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="48" name="Feat-Data" tags="data" position="1500,25" size="200,100">&lt;&lt;script&gt;&gt;
+
+&lt;div class=&quot;realm-section-title&quot;&gt;Race&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  This choice will decide the race you will be born from. In the continent of #####, there&#39;s only a single dominant intelligent race, so choose wisely before continuing.
+&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 1;&quot; id=&quot;ccRace&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;realm-section-title&quot;&gt;Gender&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 2;&quot; id=&quot;ccGender&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;realm-section-title&quot;&gt;Fate&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  This choice will decide the direction of your path on this continent. This would greatly affect the choices you can make or the events you might encounter in this realm. Having better fate might give you more years to live in this realm in peril.
+&lt;/div&gt;
+
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 4;&quot; id=&quot;ccFate&quot;&gt;&lt;/div&gt;
+
+
+&lt;div class=&quot;action-container&quot;&gt;
+  &lt;&lt;button &quot;Continue&quot;&gt;&gt;
+      &lt;&lt;Event &quot;S00002&quot;&gt;&gt;
+  &lt;&lt;/button&gt;&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+
+&lt;&lt;done&gt;&gt;
+&lt;&lt;run setup.cardpop.race();&gt;&gt;
+&lt;&lt;run setup.cardpop.fate();&gt;&gt;
+&lt;&lt;run setup.cardpop.gender();&gt;&gt;
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="48" name="Feat-Data" tags="data" position="1500,25" size="200,100">&lt;&lt;script&gt;&gt;
 setup.feat.data = {
     1001: {
         name: &quot;Age 20&quot;,
@@ -3484,22 +3740,30 @@ Empty Slot
 
 &lt;br&gt;&lt;br&gt;
 
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="50" name="Setting-Data" tags="data" position="1750,25" size="200,100"></tw-passagedata><tw-passagedata pid="51" name="Character-Creation-2" tags="" position="1000,1625" size="200,100">Points : &lt;&lt;= $game.featScore&gt;&gt;
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="50" name="Setting-Data" tags="data" position="1750,25" size="200,100"></tw-passagedata><tw-passagedata pid="51" name="Character-Creation-2" tags="nobr" position="1000,1625" size="200,100">&lt;&lt;include &quot;CreationContent--Logic&quot;&gt;&gt;
+
+&lt;div class=&quot;realm-header&quot;&gt;
+  &lt;span class=&quot;header-title&quot;&gt;Incarnation&lt;/span&gt;
+  &lt;span class=&quot;points-badge&quot;&gt;
+    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= $game.featScore&gt;&gt;&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/div&gt;
 
 Who are you? &lt;&lt;textbox &quot;$game.pc.name&quot; &quot;&quot;&gt;&gt;
-
-Gender: 
-&lt;&lt;button &quot;Male&quot;&gt;&gt;
-
-&lt;&lt;/button&gt;&gt;
+&lt;br&gt;
 
 Portait: 
+&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 1;&quot; id=&quot;ccPortrait&quot;&gt;&lt;/div&gt;
 
 Innate Trait:
 
 &lt;&lt;button &quot;Continue&quot;&gt;&gt;
 	&lt;&lt;Play &quot;Debug Passage&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="52" name="Text-Parser--Logic" tags="logic" position="2750,150" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/button&gt;&gt;
+
+&lt;&lt;done&gt;&gt;
+	&lt;&lt;run setup.cardpop.portrait();&gt;&gt;
+&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="52" name="Text-Parser--Logic" tags="logic" position="2750,150" size="200,100">&lt;&lt;script&gt;&gt;
 setup.parseText = function(text) {
     let result = &quot;&quot;;
 
@@ -3591,7 +3855,7 @@ setup.parseDialog = function(text){
 
         if(setup.staticNPC.data[id])
             text = text.replace(regex,
-                `&lt;span&gt;${setup.staticNPC.data[id].name}: &lt;/span&gt;&lt;span&gt;${dialog}&lt;/span&gt;`
+                `&lt;img src=&#39;assets/images/npc/${type}/portrait/${id}.jpg&#39;&gt;&lt;span&gt;${setup.staticNPC.data[id].name}: &lt;/span&gt;&lt;span&gt;${dialog}&lt;/span&gt;`
             );
     }
 
@@ -3644,118 +3908,52 @@ setup.event.data = {
 };
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="54" name="Fate-Data" tags="data" position="1750,275" size="200,100">&lt;&lt;script&gt;&gt;
 
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="55" name="CardWidgets" tags="logic" position="3075,150" size="200,100">&lt;&lt;script&gt;&gt;
-Macro.add(&quot;CardPopulate&quot;, {
-    handler: function () {
-        let category = this.args[0];
-
-        switch(category){
-            case &quot;race&quot;:
-                setup.cardpop.race();
-                break;
-            case &quot;fate&quot;:
-                setup.cardpop.fate();
-                break;
-            default:
-                System.log.warning(`Card populate error: ${category} doesnt exist!`);
-                break;
-        }
-    }
-});
-
-setup.cardpop = {
-    race: function(){
-        const arr = setup.charCreation1.race;
-        const vars = State.variables.game;
-
-        for(const item of arr){
-            this.populate(
-                vars.pc.race, 
-                item[0], item[1], setup.race[item[0]].name, setup.race[item[0]].description, &quot;ccRace&quot;, &quot;pc.race&quot;
-            );
-        }
-    },
-    fate: function(){
-        const arr = setup.charCreation1.fate;
-        const vars = State.variables.game;
-
-        for(const item of arr){
-            this.populate(
-                vars.pc.fate, item[0], item[1], item[0], item[2], &quot;ccFate&quot;, &quot;pc.fate&quot;
-            );
-        }
-    },
-    populate: function(currentValue, value, cost = 0, name = &quot;&quot;, description = &quot;&quot;, cardParent = &quot;&quot;, path){
-        const vars = State.variables.game;
-
-        const div = $(&quot;&lt;div&gt;&quot;);
-        div.addClass(&quot;fate-card&quot; + (currentValue === value ? &quot; selected&quot; : &quot;&quot;));
-
-        div.append(`
-            &lt;div class=&quot;card-title&quot;&gt;
-                &lt;span class=&quot;card-title&quot;&gt;${name}&lt;/span&gt;
-                &lt;span class=&quot;card-cost&quot;&gt;${cost}&lt;/span&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;card-desc&quot;&gt;${description}&lt;/div&gt;
-        `);
-
-        div.wiki(`
-            &lt;&lt;button &quot;Select&quot;&gt;&gt;
-                &lt;&lt;set $game.${path} = &quot;${value}&quot;&gt;&gt;
-                &lt;&lt;replace &quot;#creation-body&quot;&gt;&gt;
-                    &lt;&lt;include &quot;CreationContent&quot;&gt;&gt;
-                &lt;&lt;/replace&gt;&gt;
-            &lt;&lt;/button&gt;&gt;
-        `);
-
-        $(`#${cardParent}`).append(div);
-    }
-}&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="56" name="CreationContent" tags="nobr" position="1250,1500" size="200,100">&lt;div class=&quot;realm-section-title&quot;&gt;Race&lt;/div&gt;
-&lt;div class=&quot;realm-section-desc&quot;&gt;
-  This choice will decide the race you will be born from. In the continent of #####, there&#39;s only a single dominant intelligent race, so choose wisely before continuing.
-&lt;/div&gt;
-
-&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 1;&quot; id=&quot;ccRace&quot;&gt;&lt;/div&gt;
-
-
-&lt;div class=&quot;realm-section-title&quot;&gt;Gender&lt;/div&gt;
-
-&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 2;&quot; id=&quot;ccGender&quot;&gt;&lt;/div&gt;
-
-
-&lt;div class=&quot;realm-section-title&quot;&gt;Fate&lt;/div&gt;
-&lt;div class=&quot;realm-section-desc&quot;&gt;
-  This choice will decide the direction of your path on this continent. This would greatly affect the choices you can make or the events you might encounter in this realm. Having better fate might give you more years to live in this realm in peril.
-&lt;/div&gt;
-
-&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 4;&quot; id=&quot;ccFate&quot;&gt;&lt;/div&gt;
-
-
-&lt;div class=&quot;action-container&quot;&gt;
-  &lt;&lt;button &quot;Continue&quot;&gt;&gt;
-      &lt;&lt;Event &quot;S00002&quot;&gt;&gt;
-  &lt;&lt;/button&gt;&gt;
-&lt;/div&gt;
-
-&lt;&lt;done&gt;&gt;
-&lt;&lt;CardPopulate &quot;fate&quot;&gt;&gt;
-&lt;&lt;CardPopulate &quot;race&quot;&gt;&gt;
-&lt;&lt;run setup.cardpop.populate($game.pc.gender, &quot;male&quot;, 0, &quot;Male&quot;, &quot;Born under the Yang aspect. Direct and resilient constitution.&quot;, &quot;ccGender&quot;, &quot;pc.gender&quot;)&gt;&gt; 
-&lt;&lt;run setup.cardpop.populate($game.pc.gender, &quot;female&quot;, 0, &quot;Female&quot;, &quot;Born under the Yin aspect. Adaptable and sharp perception.&quot;, &quot;ccGender&quot;, &quot;pc.gender&quot;)&gt;&gt; 
-&lt;&lt;/done&gt;&gt;</tw-passagedata><tw-passagedata pid="57" name="Char-Creation-Data" tags="data" position="1500,1500" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="55" name="Char-Creation-Data" tags="data nobr" position="1500,1500" size="200,100">&lt;&lt;script&gt;&gt;
 setup.charCreation1 = {
     race: [
-        [&quot;101&quot;, 0],
-        [&quot;102&quot;, 2]
+        {
+            id: &quot;101&quot;,
+            cost: 0
+        },
+        {
+            id: &quot;102&quot;,
+            cost: 2
+        }
     ],
     fate: [
-        [&quot;Unlucky&quot;, 0, &quot;You are fated to be unlucky in this life.&quot;],
-        [&quot;Fateless&quot;, 0, &quot;You are someone who does not carry fate and your life is not tied by destiny.&quot;],
-        [&quot;Ordinary&quot;, 0, &quot;You are born into this realm just to be ordinary.&quot;],
-        [&quot;Favored by Heavens&quot;, 50, &quot;You are someone favored by the heavens themselves. But someone with this immense fate must be careful in their actions. Beings angered by heaven will try to hunt fated beings like you.&quot;],
+        {
+            name: &quot;Unlucky&quot;,
+            cost: -5,
+            description: &quot;You are fated to be unlucky in this life.&quot;
+        },
+        {
+            name: &quot;Fateless&quot;,
+            cost: -2,
+            description: &quot;You are someone who does not carry fate and your life is not tied by destiny.&quot;
+        },
+        {
+            name: &quot;Ordinary&quot;,
+            cost: 0,
+            description: &quot;You are born into this realm just to be ordinary.&quot;
+        },
+        {
+            name: &quot;Fortunate&quot;,
+            cost: 5,
+            description: &quot;You seem to have a little more luck than the average person. Small opportunities and fortunate circumstances occasionally find their way into your life.&quot;
+        },
+        {
+            name: &quot;Promising&quot;,
+            cost: 10,
+            description: &quot;There is something unusual about your fate. You are not destined for greatness, but the path before you holds greater potential than that of an ordinary person.&quot;
+        },
+        {
+            name: &quot;Favored by Heavens&quot;,
+            cost: 50,
+            description: &quot;You are someone favored by the heavens themselves. But someone with this immense fate must be careful in their actions. Beings angered by heaven will try to hunt fated beings like you.&quot;
+        }
     ]
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="58" name="Battle--Logic" tags="logic" position="2750,275" size="200,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="56" name="Battle--Logic" tags="logic" position="2750,275" size="200,100">&lt;&lt;script&gt;&gt;
 // npcID      → WHO is being fought
 // npcType    → WHAT kind of NPC they are
 // approach   → HOW the engagement happened
@@ -3774,6 +3972,8 @@ setup.battle.engage = function(npcID, npcType, approach, initiator = &quot;pc&qu
     
     setup.battle.init(npcID, npcType);
 
+    vars.battle.param.npcID = npcID;
+
     $.wiki(&quot;&lt;&lt;Play &#39;Debug-Battle&#39;&gt;&gt;&quot;);
 
     setup.battle.start(vars.battle.enemy, approach, initiator);
@@ -3790,7 +3990,7 @@ setup.battle.init = function(npcID, npcType) {
     vars.battle.log = [];
 
     // THIS MAKES SURE THAT THE ENTITY EXISTS
-    // FOR HRAND CASE IT FILLS UP THE $enemy variable
+    // FOR HRAND CASE IT FILLS UP THE $battle.enemy variable
     switch(npcType){
         case &quot;Static&quot;:
             if(!vars?.[npcID]){
@@ -3937,7 +4137,14 @@ setup.battle.action = function(sender, receiver, action, skillID = &quot;&quot;)
                 if(setup.randInt(0, 100) &lt;= chance){
                     setup.pushGameLog(`${sender.name} fled the battle!`);
 
-                    vars.battle.enemy = {};
+                    vars.battle = {
+                        enemy: {},
+                        sequence: [],
+                        log: [],
+                        param: {
+                            damage: null
+                        }
+                    }
                     vars.system.preventReload = false;
 
                     $.wiki(&quot;&lt;&lt;goback&gt;&gt;&quot;);
@@ -3958,7 +4165,18 @@ setup.battle.action = function(sender, receiver, action, skillID = &quot;&quot;)
         } else {
             setup.pushGameLog(`You defeated ${receiver.name}`);
 
-            vars.battle.enemy = {};
+            if(&quot;killed&quot; in vars.event.flags){
+                vars.event.flags.killed.push(vars.battle.param.npcID);
+            }
+
+            vars.battle = {
+                enemy: {},
+                sequence: [],
+                log: [],
+                param: {
+                    damage: null
+                }
+            }
             vars.system.preventReload = false;
 
             $.wiki(&quot;&lt;&lt;goback&gt;&gt;&quot;);
@@ -4038,7 +4256,7 @@ setup.battle.genTurn = function(entities = []){
         }
     }
 }
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="59" name="enums" tags="logic" position="3075,275" size="100,100">&lt;&lt;script&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="57" name="enums" tags="logic" position="3075,275" size="100,100">&lt;&lt;script&gt;&gt;
 setup.traitTypes = Object.freeze([
     &quot;innate&quot;,
     &quot;acquired&quot;,
@@ -4075,23 +4293,23 @@ setup.skill.sub = Object.freeze([
    &quot;Peak&quot;,
    &quot;Perfected&quot;
 ]);
-&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="60" name="Enemy-Card" tags="" position="25,1425" size="200,100">Name : &lt;&lt;= $game.battle.enemy.name&gt;&gt;
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="58" name="Enemy-Card" tags="" position="25,1425" size="200,100">Name : &lt;&lt;= $game.battle.enemy.name&gt;&gt;
 Gender : &lt;&lt;= $game.battle.enemy.gender&gt;&gt;
 
 Health : &lt;&lt;= $game.battle.enemy.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.battle.enemy.hps).toFixed(2)&gt;&gt;
-Stamina : &lt;&lt;= $game.battle.enemy.sta[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.battle.enemy.sta).toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="61" name="PC-Card" tags="" position="25,1550" size="200,100">Health : &lt;&lt;= $game.pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.pc.hps).toFixed(2)&gt;&gt;
-Stamina : &lt;&lt;= $game.pc.sta[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.pc.sta).toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="62" name="Battle-Log-Card" tags="" position="25,1675" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.battle.log.length; _i++&gt;&gt;
+Stamina : &lt;&lt;= $game.battle.enemy.sta[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.battle.enemy.sta).toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="59" name="PC-Card" tags="" position="25,1550" size="200,100">Health : &lt;&lt;= $game.pc.hps[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.pc.hps).toFixed(2)&gt;&gt;
+Stamina : &lt;&lt;= $game.pc.sta[0].toFixed(2)&gt;&gt; / &lt;&lt;= setup.volatileMax($game.pc.sta).toFixed(2)&gt;&gt;</tw-passagedata><tw-passagedata pid="60" name="Battle-Log-Card" tags="" position="25,1675" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.battle.log.length; _i++&gt;&gt;
 	&lt;&lt;= $game.battle.log[_i]&gt;&gt;
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="63" name="Active-Skills-Card" tags="nobr" position="25,1925" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.pc.skill.combat.active.length; _i++&gt;&gt;
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="61" name="Active-Skills-Card" tags="nobr" position="25,1925" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.pc.skill.combat.active.length; _i++&gt;&gt;
 	&lt;&lt;capture _i&gt;&gt;
         &lt;&lt;set _skillID = $game.pc.skill.combat.active[_i]&gt;&gt;
         &lt;&lt;button setup.skill.active.data[_skillID].name&gt;&gt;
             &lt;&lt;run setup.battle.action($game.pc, $game.battle.enemy, &quot;attack&quot;, _skillID)&gt;&gt;
         &lt;&lt;/button&gt;&gt;
     &lt;&lt;/capture&gt;&gt;
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="64" name="Battle-Seq-Card" tags="nobr" position="25,1800" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.battle.sequence.length; _i++&gt;&gt;
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="62" name="Battle-Seq-Card" tags="nobr" position="25,1800" size="200,100">&lt;&lt;for _i = 0; _i &lt; $game.battle.sequence.length; _i++&gt;&gt;
 	&lt;&lt;= $game.battle.sequence[_i]&gt;&gt; &lt;&lt;= &quot; &quot;&gt;&gt;
-&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="65" name="Flee--Dialog" tags="dialog" position="25,2050" size="200,100">Are you sure you want to flee the battle?
+&lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="63" name="Flee--Dialog" tags="dialog" position="25,2050" size="200,100">Are you sure you want to flee the battle?
 
 &lt;&lt;button &quot;Yes&quot;&gt;&gt;
 	&lt;&lt;run setup.fleeEvaluate()&gt;&gt;
@@ -4119,6 +4337,186 @@ setup.fleeEvaluate = function(){
 		setup.battle.action(vars.pc, vars.battle.enemy, &quot;null&quot;);
 		setup.pushGameLog(`You tried to flee the battle, but failed to do so.`);
 	}
+}
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="64" name="CreationContent--Logic" tags="logic nobr" position="1250,1500" size="200,100">&lt;&lt;script&gt;&gt;
+setup.cardpop = {
+    race: function(){
+        const arr = setup.charCreation1.race;
+        const vars = State.variables.game;
+
+        for(const item of arr){
+            this.populate(
+                vars.pc.race,
+                &quot;pc.race&quot;,
+                setup.race.data[item.id].name,
+                setup.race.data[item.id].description,
+                item.id,
+                item.cost,
+                &quot;ccRace&quot;,
+                &quot;race&quot;
+            );
+        }
+    },
+    fate: function(){
+        const arr = setup.charCreation1.fate;
+        const vars = State.variables.game;
+
+        for(const item of arr){
+            this.populate(
+                vars.pc.fate,
+                &quot;pc.fate&quot;,
+                item.name,
+                item.description,
+                item.name,
+                item.cost,
+                &quot;ccFate&quot;,
+                &quot;fate&quot;
+            );
+        }
+    },
+    gender: function(){
+        const vars = State.variables.game;
+        const genders = setup.race.data[vars.pc.race].genders;
+
+        for(const gender of genders){
+            this.populate(
+                vars.pc.gender,
+                &quot;pc.gender&quot;,
+                gender,
+                &quot;&quot;,
+                gender,
+                0,
+                &quot;ccGender&quot;,
+                &quot;gender&quot;
+            );
+        }
+    },
+    portrait: function(){
+        const vars = State.variables.game;
+
+        let charSet = &quot;&quot;;
+
+        console.log(setup.race.asset);
+
+        for(const set of Object.keys(setup.race.asset)){
+            if(setup.race.asset[set].scope.some(element =&gt; element == vars.pc.race)){
+                charSet = set;
+                break;
+            }
+        }
+
+        for(const portrait of setup.race.asset[charSet].portrait[vars.pc.gender.toLowerCase()]){
+            const div = $(&quot;&lt;div&gt;&quot;);
+
+            div.append(`&lt;img src=&quot;assets/images/pc/portrait/${portrait}-1.jpg&quot; width=&quot;50px&quot;&gt;`);
+            $(`#ccPortrait`).append(div);
+        }
+    },
+    populate: function(targetValue, targetPath, name = &quot;&quot;, description = &quot;&quot;, value, cost = 0, cardParent = &quot;&quot;, card){
+        const vars = State.variables.game;
+
+        const div = $(&quot;&lt;div&gt;&quot;);
+
+        div.addClass(&quot;fate-card&quot; + (targetValue == value ? &quot; selected&quot; : &quot;&quot;));
+
+        const inner_div = $(&quot;&lt;div&gt;&quot;);
+        inner_div.addClass(&quot;card-title&quot;);
+
+        if(name !== &quot;&quot;){
+            inner_div.append(`&lt;span class=&quot;card-title&quot;&gt;${name}&lt;/span&gt;`);
+        }
+
+        if(cost !== 0){
+            inner_div.append(`&lt;span class=&quot;card-cost&quot;&gt;${cost}&lt;/span&gt;`);
+        }
+
+        div.append(inner_div);
+
+        if(description !== &quot;&quot;){
+            div.append(`&lt;div class=&quot;card-desc&quot;&gt;${description}&lt;/div&gt;`);
+        }
+
+        div.on(&quot;click&quot;, async () =&gt; {
+            if(setup.getVal(vars, targetPath) === value){
+                setup.setVal(vars, targetPath, &quot;&quot;);
+
+                for(let i = 0; i &lt; vars.cc.list.length; i++){
+                    if (vars.cc.list[i].path === targetPath) {
+                        vars.cc.list.splice(i, 1);
+                        break;
+                    }
+                }
+
+                $(&quot;.points-val&quot;).empty();
+                $(&quot;.points-val&quot;).wiki(vars.featScore - this.totalUsage());
+
+                $(`#${cardParent}`).empty();
+                this[card]();
+
+                return;
+            }
+
+            for (let i = 0; i &lt; vars.cc.list.length; i++) {
+                if (vars.cc.list[i].path === targetPath){
+                    if (this.totalUsage() - vars.cc.list[i].cost + cost &gt; vars.featScore) {
+                        Dialog.wiki(&quot;Not enough feat points!&quot;);
+                        Dialog.open();
+                        return;
+                    }
+
+                    vars.cc.list[i] = {
+                        value: value,
+                        path: targetPath,
+                        cost: cost
+                    };
+
+                    setup.setVal(vars, targetPath, value);
+
+                    $(&quot;.points-val&quot;).empty();
+                    $(&quot;.points-val&quot;).wiki(vars.featScore - this.totalUsage());
+
+                    $(`#${cardParent}`).empty();
+                    this[card]();
+
+                    return;
+                }
+            }
+
+            if(this.totalUsage() + cost &gt; vars.featScore) {
+                Dialog.wiki(&quot;Not enough feat points!&quot;);
+                Dialog.open();
+            } else{
+                vars.cc.list.push({
+                    value: value,
+                    path: targetPath,
+                    cost: cost
+                });
+
+                setup.setVal(vars, targetPath, value);
+
+                $(&quot;.points-val&quot;).empty();
+                $(&quot;.points-val&quot;).wiki(vars.featScore - this.totalUsage());
+
+                $(`#${cardParent}`).empty();
+                this[card]();
+            }
+
+        });
+        $(`#${cardParent}`).append(div);
+    },
+    totalUsage: function(){
+        const vars = State.variables.game;
+
+        if(vars.cc.list.length &lt;= 0) return 0;
+
+        let total = 0;
+
+        for(let i = 0; i &lt; vars.cc.list.length; i++){
+            total += vars.cc.list[i].cost;
+        }
+
+        return total;
+    }
 }
 &lt;&lt;/script&gt;&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">

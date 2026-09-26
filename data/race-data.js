@@ -1,4 +1,5 @@
-setup.race = {
+setup.race = {};
+setup.race.data = {
     101: {
         name: "Human",
         description: "Humans are said to be the dominant race of this continent. It said they possess incredible will to innovate and incredible will to survive",
@@ -34,5 +35,25 @@ setup.race = {
             per: 0.3,
             regen: 0
         }
+    },
+    103: {
+        name: "",
+        description: "",
+        lifespan: 0,
+        genders: [],
+        multiplier: {
+        },
+        stat: {
+        }
+    },
+};
+
+setup.race.asset = {
+    "set0":{
+        scope: [101, 102],
+        portrait: {
+            male: ["m1", "m2", "m3", "m4"],
+            female: ["f1", "f2", "f3"]
+        }
     }
-}
+};

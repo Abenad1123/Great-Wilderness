@@ -61,7 +61,12 @@ setup.trait = {
         img: "",
         modifier: {
             normal:{
-                luck: 10
+                luck: 10,
+                str: 10,
+                con: 10,
+                int: 10,
+                agi: 10,
+                per: 10
             },
         },
         effect: {
