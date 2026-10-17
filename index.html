@@ -246,21 +246,80 @@ button {
     }
 }
 
-/*─── EVENT STYLES ────────────────────────────────*/
+@keyframes revealLine {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*─── EVENT & SCENE STYLES ────────────────────────────────*/
+.event-img-frame {
+    position: relative;
+    max-width: 660px;
+    margin: 0.5rem auto 1.75rem auto;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(212, 175, 55, 0.12);
+    background: #000;
+}
+
+.event-img-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.55);
+}
+
 .event-img {
-	width: clamp(200px, 75vw, 600px);
-  	animation: reveal 1.5s ease 0s forwards;
+	width: 100%;
+	height: auto;
+	max-height: 400px;
+	object-fit: cover;
+  	animation: reveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   	display: block;
-  	margin-left: auto;
-  	margin-right: auto;
 }
 
 /*─── TEXT STYLES ────────────────────────────────*/
 .line {
-	margin-bottom: 15px;
+	margin-bottom: 16px;
   	opacity: 0;
   	display: block;
-    animation: reveal 0.5s forwards;
+    animation: revealLine 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    line-height: 1.75;
+    font-size: 1.05rem;
+    color: var(--text-main, #dcdfd5);
+    font-family: 'Alte', 'Roboto-R', "Georgia", serif;
+    letter-spacing: 0.02em;
+}
+
+.scene-block {
+    position: relative;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.4s ease;
+}
+
+.scene-block.past-block {
+    opacity: 0.62;
+}
+
+.scene-block.past-block:hover {
+    opacity: 0.95;
+}
+
+.scene-block.current-block {
+    opacity: 1;
+}
+
+.scene-block + .scene-block {
+    padding-top: 1.4rem;
+    border-top: 1px dashed rgba(212, 175, 55, 0.18);
 }
 
 .prevent-select {
@@ -277,63 +336,165 @@ button {
 
 .scene-view {
 	--choice-gold: #d4af37;
-	--choice-gold-glow: rgba(212, 175, 55, 0.1);
-	--transition-speed: 0.35s;
+	--choice-gold-dim: rgba(212, 175, 55, 0.45);
+	--choice-gold-glow: rgba(212, 175, 55, 0.18);
+	--transition-speed: 0.25s;
 
-	max-width: 720px;
+	max-width: 780px;
 	margin: 0 auto;
-	padding: 4vh 20px;
+	padding: 3vh 16px 6vh 16px;
 	box-sizing: border-box;
 }
+/* Narrative container */
+#scene-container {
+	cursor: pointer;
+	min-height: 80px;
+}
 
-/* --- DIVIDER --- */
+/* Divider with diamond symbol */
 .choices-divider {
+	display: flex;
+	align-items: center;
 	width: 100%;
+	margin: 2.2rem 0 1.5rem 0;
+	gap: 14px;
+}
+
+.choices-divider::before,
+.choices-divider::after {
+	content: '';
+	flex: 1;
 	height: 1px;
-	background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.2), transparent);
-	margin: 3rem 0;
+	background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.35));
+}
+
+.choices-divider::after {
+	background: linear-gradient(to left, transparent, rgba(212, 175, 55, 0.35));
+}
+
+.divider-diamond {
+	color: var(--choice-gold);
+	font-size: 0.65rem;
+	line-height: 1;
+	opacity: 0.9;
+	text-shadow: 0 0 8px var(--choice-gold-glow);
+	flex-shrink: 0;
+}
+
+/* Choices Section */
+.choices-section {
+	margin-top: 0;
 }
 
 #choices-container {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	margin-top: 1.5rem;
   	gap: 10px;
+}
+
+.choice-item {
+	width: 100%;
 }
 
 #choices-container a, #choices-container .link-internal {
 	position: relative;
-	display: block;
+	display: flex !important;
+	align-items: center;
 	width: 100%;
-	padding: 8px 24px !important;
-	background: rgba(15, 12, 12, 0.65) !important;
+	min-height: 50px;
+	padding: 12px 20px !important;
+	background: linear-gradient(90deg, rgba(18, 21, 28, 0.88) 0%, rgba(13, 15, 20, 0.78) 100%) !important;
+	backdrop-filter: blur(8px);
 	border: 1px solid rgba(255, 255, 255, 0.08) !important;
-	border-left: 3px solid rgba(255, 255, 255, 0.25) !important;
+	border-left: 3px solid rgba(212, 175, 55, 0.5) !important;
 	border-radius: 4px !important;
 	
-	font-size: 0.85rem !important;
-	font-weight: 400 !important;
-	letter-spacing: 0.05em !important;
-	color: var(--text-dim) !important;
+	font-family: 'Alte', 'Times New Roman', Georgia, serif, sans-serif !important;
+	font-size: 0.98rem !important;
+	font-weight: 500 !important;
+	letter-spacing: 0.03em !important;
+	color: #d6dadf !important;
 	text-decoration: none !important;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 	box-sizing: border-box;
 	transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 	cursor: pointer;
 }
 
+.choice-index {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 26px;
+	height: 26px;
+	padding: 0 6px;
+	box-sizing: border-box;
+	font-family: 'Alte-B', 'Times New Roman', Georgia, serif;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--choice-gold);
+	background: rgba(212, 175, 55, 0.1);
+	border: 1px solid rgba(212, 175, 55, 0.3);
+	border-radius: 4px;
+	margin-right: 14px;
+	flex-shrink: 0;
+	transition: all var(--transition-speed) ease;
+	box-shadow: inset 0 0 4px rgba(212, 175, 55, 0.08);
+}
+
+.choice-label {
+	flex: 1;
+	display: block;
+	text-align: left;
+	line-height: 1.45;
+	transition: color var(--transition-speed) ease, text-shadow var(--transition-speed) ease;
+}
+
+.choice-label::first-letter {
+	text-transform: uppercase;
+}
+
+.choice-icon {
+	color: var(--choice-gold);
+	font-size: 1.25rem;
+	line-height: 1;
+	opacity: 0.5;
+	margin-left: 14px;
+	flex-shrink: 0;
+	transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease, text-shadow var(--transition-speed) ease;
+}
+
 #choices-container a:hover, #choices-container .link-internal:hover {
 	color: #ffffff !important;
-	background: rgba(25, 20, 20, 0.8) !important;
-	border-color: rgba(212, 175, 55, 0.35) !important;
+	background: linear-gradient(90deg, rgba(30, 27, 22, 0.95) 0%, rgba(18, 20, 26, 0.9) 100%) !important;
+	border-color: rgba(212, 175, 55, 0.4) !important;
 	border-left-color: var(--choice-gold) !important;
-	padding-left: 34px !important;
 	box-shadow: 
-		0 6px 15px rgba(0, 0, 0, 0.6), 
-		0 0 10px var(--choice-gold-glow),
-		inset 0 0 8px rgba(212, 175, 55, 0.05);
-	letter-spacing: 0.08em !important;
+		0 8px 24px rgba(0, 0, 0, 0.65), 
+		0 0 16px var(--choice-gold-glow),
+		inset 0 1px 0 rgba(212, 175, 55, 0.2);
+	transform: translateX(6px);
+}
+
+#choices-container a:hover .choice-index {
+	background: var(--choice-gold);
+	color: #08090b;
+	border-color: var(--choice-gold);
+	box-shadow: 0 0 10px rgba(212, 175, 55, 0.55);
+	transform: scale(1.05);
+}
+
+#choices-container a:hover .choice-label {
+	color: #ffffff;
+	text-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+#choices-container a:hover .choice-icon {
+	opacity: 1;
+	transform: translateX(4px);
+	text-shadow: 0 0 8px var(--choice-gold-glow);
 }
 
 #choices-container a:focus {
@@ -342,19 +503,109 @@ button {
 }
 
 #choices-container a:active, #choices-container .link-internal:active {
-	transform: scale(0.99);
+	transform: translateX(4px) scale(0.995);
+}
+
+/* Battle Choice Styling */
+.choice-item.choice-battle a {
+	border-left-color: #d94343 !important;
+	background: linear-gradient(90deg, rgba(46, 16, 18, 0.88) 0%, rgba(18, 14, 16, 0.78) 100%) !important;
+}
+
+.choice-item.choice-battle a:hover {
+	border-color: rgba(255, 85, 85, 0.5) !important;
+	border-left-color: #ff4d4d !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(220, 50, 50, 0.35) !important;
+}
+
+.choice-item.choice-battle .choice-index {
+	color: #ff7777;
+	background: rgba(220, 50, 50, 0.12);
+	border-color: rgba(220, 50, 50, 0.3);
+}
+
+.choice-item.choice-battle a:hover .choice-index {
+	background: #ff4d4d;
+	color: #0d0607;
+	border-color: #ff4d4d;
+	box-shadow: 0 0 10px rgba(255, 77, 77, 0.55);
+}
+
+.choice-item.choice-battle .choice-icon {
+	color: #ff5555;
+	font-size: 1.15rem;
+}
+
+/* Exit / Conclusion Choice Styling */
+.choice-item.choice-exit a {
+	border-left-color: #5d9ad2 !important;
+	background: linear-gradient(90deg, rgba(16, 26, 38, 0.88) 0%, rgba(12, 16, 22, 0.78) 100%) !important;
+}
+
+.choice-item.choice-exit a:hover {
+	border-color: rgba(125, 185, 239, 0.5) !important;
+	border-left-color: #6bb3f5 !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(90, 155, 212, 0.35) !important;
+}
+
+.choice-item.choice-exit .choice-index {
+	color: #7db9ef;
+	background: rgba(90, 155, 212, 0.12);
+	border-color: rgba(90, 155, 212, 0.3);
+}
+
+.choice-item.choice-exit a:hover .choice-index {
+	background: #6bb3f5;
+	color: #050b12;
+	border-color: #6bb3f5;
+	box-shadow: 0 0 10px rgba(107, 179, 245, 0.55);
+}
+
+.choice-item.choice-exit .choice-icon {
+	color: #7db9ef;
+	font-size: 1rem;
+}
+
+/* Action Choice Styling */
+.choice-item.choice-action a {
+	border-left-color: #e5a83b !important;
+	background: linear-gradient(90deg, rgba(38, 28, 14, 0.88) 0%, rgba(18, 16, 14, 0.78) 100%) !important;
+}
+
+.choice-item.choice-action a:hover {
+	border-color: rgba(245, 184, 66, 0.5) !important;
+	border-left-color: #f5b842 !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(229, 168, 59, 0.35) !important;
+}
+
+.choice-item.choice-action .choice-index {
+	color: #f0be5a;
+	background: rgba(229, 168, 59, 0.12);
+	border-color: rgba(229, 168, 59, 0.3);
+}
+
+.choice-item.choice-action a:hover .choice-index {
+	background: #f5b842;
+	color: #0c0803;
+	border-color: #f5b842;
+	box-shadow: 0 0 10px rgba(245, 184, 66, 0.55);
+}
+
+.choice-item.choice-action .choice-icon {
+	color: #f0be5a;
+	font-size: 1rem;
 }
 
 @media screen and (max-width: 600px) {
 	.scene-view {
-		padding: 2vh 12px;
+		padding: 2vh 10px;
 	}
-	#scene-container {
-		font-size: 1.05rem;
+	.line {
+		font-size: 0.98rem;
 	}
 	#choices-container a {
-		padding: 14px 20px !important;
-		font-size: 0.95rem !important;
+		padding: 10px 14px !important;
+		font-size: 0.9rem !important;
 	}
 }
 
@@ -477,6 +728,85 @@ setup.feat = {};
 setup.battle = {};
 
 setup.skill = {};
+
+setup.menu = {
+    initEmbers: function() {
+        const canvas = document.getElementById("menu-embers-canvas");
+        if(!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if(!ctx) return;
+
+        let animId = null;
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const onResize = function() {
+            if(!document.getElementById("menu-embers-canvas")) {
+                window.removeEventListener("resize", onResize);
+                return;
+            }
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        };
+        window.addEventListener("resize", onResize);
+
+        const particles = [];
+        const count = Math.min(45, Math.max(20, Math.floor(width / 32)));
+
+        for(let i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.8 + 0.6,
+                speedY: Math.random() * 0.45 + 0.15,
+                speedX: (Math.random() - 0.5) * 0.25,
+                opacity: Math.random() * 0.55 + 0.15,
+                targetOpacity: Math.random() * 0.6 + 0.2,
+                pulseSpeed: Math.random() * 0.02 + 0.008,
+                color: Math.random() > 0.35 ? "212, 175, 55" : "245, 215, 130"
+            });
+        }
+
+        function render() {
+            if(!document.getElementById("menu-embers-canvas")) {
+                window.removeEventListener("resize", onResize);
+                cancelAnimationFrame(animId);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+
+            for(let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.y -= p.speedY;
+                p.x += Math.sin(p.y * 0.015) * 0.35 + p.speedX;
+
+                p.opacity += (p.targetOpacity - p.opacity) * p.pulseSpeed;
+                if(Math.abs(p.targetOpacity - p.opacity) < 0.04) {
+                    p.targetOpacity = Math.random() * 0.65 + 0.15;
+                }
+
+                if(p.y < -10) {
+                    p.y = height + 10;
+                    p.x = Math.random() * width;
+                }
+                if(p.x < -10) p.x = width + 10;
+                if(p.x > width + 10) p.x = -10;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `rgba(${p.color}, 0.8)`;
+                ctx.fill();
+            }
+
+            animId = requestAnimationFrame(render);
+        }
+
+        animId = requestAnimationFrame(render);
+    }
+};
         
 $(document).on(":passagestart", () => (State.expired.length = 0));
 
@@ -1247,7 +1577,7 @@ Points : &lt;&lt;= $game.featScore&gt;&gt;
 &lt;&lt;include &quot;Text-Parser--Logic&quot;&gt;&gt;
 &lt;&lt;include &quot;Battle--Logic&quot;&gt;&gt;
 </tw-passagedata><tw-passagedata pid="4" name="StoryDisplayTitle" tags="nobr" position="525,25" size="200,100">&lt;img src=&quot;assets/images/ui/ui_logo2.png&quot; id=&quot;displayTitle-logo&quot;&gt;
-&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.25.0 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,1300" size="200,100">&lt;div id=&quot;battle-log-card&quot;&gt;
+&lt;p id=&quot;displayTitle-desc&quot; class=&quot;no-select&quot;&gt;Version 0.26.1 InDev&lt;/p&gt;</tw-passagedata><tw-passagedata pid="5" name="Debug-Battle" tags="" position="25,1300" size="200,100">&lt;div id=&quot;battle-log-card&quot;&gt;
 	
 &lt;/div&gt;
 
@@ -1552,9 +1882,13 @@ $(document).on(&#39;:passagerender&#39;, function() {
 &lt;div class=&quot;scene-view&quot;&gt;
 	&lt;div id=&quot;scene-container&quot;&gt;&lt;/div&gt;
 
-	&lt;div class=&quot;choices-divider&quot;&gt;&lt;/div&gt;
+	&lt;div class=&quot;choices-divider&quot;&gt;
+		&lt;span class=&quot;divider-diamond&quot;&gt;◆&lt;/span&gt;
+	&lt;/div&gt;
 
-	&lt;div id=&quot;choices-container&quot;&gt;&lt;/div&gt;
+	&lt;div class=&quot;choices-section&quot;&gt;
+		&lt;div id=&quot;choices-container&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="Debug-Shop" tags="" position="525,1300" size="200,100">&lt;&lt;set _shopID = 101&gt;&gt;
 &lt;&lt;run setup.shop.check(_shopID)&gt;&gt;
 &lt;!----------------------------------------------------------------------------------------&gt;
@@ -2193,6 +2527,32 @@ setup.event.start = function() {
     
     $(&quot;#scene-container&quot;).empty();
 
+    // Fast-reveal on container click
+    $(&quot;#scene-container&quot;).off(&quot;click.reveal&quot;).on(&quot;click.reveal&quot;, function() {
+        $(this).find(&quot;.line&quot;).css({ animationDelay: &quot;0ms&quot;, opacity: &quot;1&quot; });
+    });
+
+    // Keyboard navigation: Space to reveal text, number keys 1-9 to select choices
+    $(document).off(&quot;keydown.sceneControls&quot;).on(&quot;keydown.sceneControls&quot;, function(e) {
+        if($(e.target).is(&quot;input, textarea, select&quot;)) return;
+
+        if(e.code === &quot;Space&quot;) {
+            const $lines = $(&quot;#scene-container .line&quot;);
+            const hasHidden = $lines.toArray().some(el =&gt; window.getComputedStyle(el).opacity === &quot;0&quot;);
+            if(hasHidden) {
+                e.preventDefault();
+                $lines.css({ animationDelay: &quot;0ms&quot;, opacity: &quot;1&quot; });
+            }
+        } else if(!e.ctrlKey &amp;&amp; !e.altKey &amp;&amp; !e.metaKey &amp;&amp; e.key &gt;= &quot;1&quot; &amp;&amp; e.key &lt;= &quot;9&quot;) {
+            const idx = parseInt(e.key, 10) - 1;
+            const $choices = $(&quot;#choices-container a&quot;);
+            if(idx &lt; $choices.length) {
+                e.preventDefault();
+                $choices.eq(idx).trigger(&quot;click&quot;);
+            }
+        }
+    });
+
     setup.event.loadScene();
 }
 
@@ -2214,27 +2574,35 @@ setup.event.continue = function(sceneKey) {
 setup.event.loadScene = function(){
     const vars = State.variables.game;
 
-    if(Object.keys(setup.event.data).includes(vars.event.scene) == false){
-        setup.log.warning(`Scene ${vars.event.scene} doesnt exists in this event!`);
+    if(!setup.event.data || !setup.event.data[vars.event.scene]){
+        setup.log.warning(`Scene ${vars.event.scene} doesn&#39;t exist in this event!`);
+        return;
     }
 
     const currentScene = setup.event.data[vars.event.scene];
     const sceneKey = vars.event.scene;
 
-    setup.event.loadImage(currentScene.img);
-    setup.event.loadText(currentScene.txt);
+    // Mark previous narrative blocks as past so they dim slightly
+    $(&quot;#scene-container .scene-block&quot;).removeClass(&quot;current-block&quot;).addClass(&quot;past-block&quot;);
+
+    // Create a new block for the current scene
+    const $block = $(&#39;&lt;div class=&quot;scene-block current-block&quot;&gt;&lt;/div&gt;&#39;);
+    $(&quot;#scene-container&quot;).append($block);
+
+    setup.event.loadImage(currentScene.img, $block);
+    setup.event.loadText(currentScene.txt, $block);
     setup.event.loadChoice(currentScene.choice);
 
-    if(typeof setup.event.data[sceneKey].action === &quot;function&quot;){
-        setup.event.data[sceneKey].action(vars.pc);
+    if(typeof currentScene.action === &quot;function&quot;){
+        currentScene.action(vars.pc);
     }
 
     requestAnimationFrame(() =&gt; {
         requestAnimationFrame(() =&gt; {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: &quot;smooth&quot;
-            });
+            const target = $block[0] || document.getElementById(&quot;choices-container&quot;);
+            if(target) {
+                target.scrollIntoView({ behavior: &quot;smooth&quot;, block: &quot;start&quot; });
+            }
         });
     });
 }
@@ -2242,16 +2610,16 @@ setup.event.loadScene = function(){
 // USED TO LOAD CHOICES AND ITS LOGIC
 setup.event.loadChoice = function(sceneChoices){
     const vars = State.variables.game;
-
     const sceneKey = vars.event.scene;
 
     $(&quot;#choices-container&quot;).empty();
 
-    if(sceneChoices.length === 0){
+    if(!sceneChoices || sceneChoices.length === 0){
         setup.log.warning(`There&#39;s no choices in this scene ${sceneKey}!`);
         return;
     }
 
+    let choiceNum = 1;
     for(let i = 0; i &lt; sceneChoices.length; i++){
         const choice = sceneChoices[i];
         const nextSceneKey = choice.next;
@@ -2278,9 +2646,32 @@ setup.event.loadChoice = function(sceneChoices){
             action += `&lt;&lt;run setup.event.data[&quot;${sceneKey}&quot;].choice[${i}].func()&gt;&gt;`;
         }
 
-        $(&quot;#choices-container&quot;).wiki(`&lt;&lt;link &quot;${choice.txt}&quot;&gt;&gt;${action}&lt;&lt;/link&gt;&gt;`);
+        let choiceClass = &quot;choice-item&quot;;
+        let icon = `&lt;span class=&quot;choice-icon&quot;&gt;›&lt;/span&gt;`;
 
-        $(&quot;#choices-container a&quot;).last().addClass(&quot;prevent-select&quot;);
+        if(choice.battle){
+            choiceClass += &quot; choice-battle&quot;;
+            icon = `&lt;span class=&quot;choice-icon&quot; title=&quot;Combat Encounter&quot;&gt;⚔&lt;/span&gt;`;
+        } else if(choice.next === &quot;end&quot; || choice.nextPassage){
+            choiceClass += &quot; choice-exit&quot;;
+            icon = `&lt;span class=&quot;choice-icon&quot; title=&quot;Conclude Scene&quot;&gt;✦&lt;/span&gt;`;
+        } else if(choice.func &amp;&amp; !choice.next){
+            choiceClass += &quot; choice-action&quot;;
+            icon = `&lt;span class=&quot;choice-icon&quot;&gt;⚡&lt;/span&gt;`;
+        }
+
+        const choiceIndex = `&lt;span class=&quot;choice-index&quot;&gt;${choiceNum}&lt;/span&gt;`;
+        choiceNum++;
+
+        const $wrapper = $(`&lt;div class=&quot;${choiceClass}&quot;&gt;&lt;/div&gt;`);
+        $wrapper.wiki(`&lt;&lt;link &quot;${choice.txt}&quot;&gt;&gt;${action}&lt;&lt;/link&gt;&gt;`);
+
+        const $link = $wrapper.find(&quot;a&quot;);
+        const linkContents = $link.contents();
+        const $label = $(&#39;&lt;span class=&quot;choice-label&quot;&gt;&lt;/span&gt;&#39;).append(linkContents);
+
+        $link.empty().append(choiceIndex).append($label).append(icon).addClass(&quot;prevent-select&quot;);
+        $(&quot;#choices-container&quot;).append($wrapper);
     }
 }
 
@@ -2292,27 +2683,33 @@ setup.event.clear = function(){
         scene: &quot;&quot;,
         data: {},
         flags: {},
-    }
+    };
+
+    $(document).off(&quot;keydown.sceneControls&quot;);
 }
 
 // USED TO LOAD IMAGES
-setup.event.loadImage = function(path){
-    if(path !== undefined || path === &quot;&quot;) {
-        $(&quot;#scene-container&quot;).append(`&lt;img src=&quot;${path}&quot; class=&quot;event-img&quot;&gt;&lt;br&gt;`);
-        $(&quot;#scene-container img&quot;).attr(&quot;draggable&quot;, false);
+setup.event.loadImage = function(path, $target){
+    const $dest = $target || $(&quot;#scene-container&quot;);
+    if(path &amp;&amp; typeof path === &quot;string&quot; &amp;&amp; path.trim() !== &quot;&quot;) {
+        $dest.append(`
+            &lt;div class=&quot;event-img-frame&quot;&gt;
+                &lt;img src=&quot;${path}&quot; class=&quot;event-img prevent-select&quot; draggable=&quot;false&quot; alt=&quot;Scene Illustration&quot;&gt;
+            &lt;/div&gt;
+        `);
     }
 }
 
 // USED TO LOAD TEXT
-setup.event.loadText = function(text){
+setup.event.loadText = function(text, $target){
     const vars = State.variables.game;
-
     const sceneKey = vars.event.scene;
+    const $dest = $target || $(&quot;#scene-container&quot;);
 
     if(text){
-        $(&quot;#scene-container&quot;).wiki(setup.parseText(text));
+        $dest.wiki(setup.parseText(text));
     } else {
-        $(&quot;#scene-container&quot;).wiki(setup.parseText(
+        $dest.wiki(setup.parseText(
             `[b]There&#39;s no text in this scene ${sceneKey}![/b]`
         ));
     }
@@ -3473,11 +3870,21 @@ setup.area.check = function(area) {
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="44" name="Main-Menu" tags="nobr" position="1250,1300" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
 &lt;div class=&quot;menu-container&quot;&gt;
 	&lt;div class=&quot;menu-bg-artwork&quot; style=&quot;background-image: url(&#39;assets/images/ui/illustration/background_art1.jpg&#39;);&quot;&gt;&lt;/div&gt;
-	&lt;div class=&quot;menu-smoke-layer&quot;&gt;
-		&lt;div class=&quot;mist-cloud cloud-1&quot;&gt;&lt;/div&gt;
-		&lt;div class=&quot;mist-cloud cloud-2&quot;&gt;&lt;/div&gt;
-		&lt;div class=&quot;mist-cloud cloud-3&quot;&gt;&lt;/div&gt;
+	&lt;div class=&quot;menu-fog-layer&quot;&gt;
+		&lt;div id=&quot;foglayer_01&quot; class=&quot;fog-band&quot;&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id=&quot;foglayer_02&quot; class=&quot;fog-band&quot;&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id=&quot;foglayer_03&quot; class=&quot;fog-band&quot;&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+			&lt;div class=&quot;fog-image&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
 	&lt;/div&gt;
+	&lt;canvas id=&quot;menu-embers-canvas&quot;&gt;&lt;/canvas&gt;
 	&lt;div class=&quot;menu-vignette&quot;&gt;&lt;/div&gt;
 
 	&lt;div class=&quot;menu-scroll-wrap&quot;&gt;
@@ -3487,7 +3894,7 @@ setup.area.check = function(area) {
 			&lt;/header&gt;
 
 			&lt;nav class=&quot;menu-navigation&quot;&gt;
-				&lt;div class=&quot;btn-primary&quot; class=&quot;prevent-select&quot;&gt;
+				&lt;div class=&quot;btn-primary prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Start&quot;&gt;&gt;
 						&lt;&lt;run setup.start.init()&gt;&gt;
                         &lt;&lt;run setup.feat.sync()&gt;&gt;
@@ -3496,13 +3903,13 @@ setup.area.check = function(area) {
 					&lt;&lt;/button&gt;&gt;
 				&lt;/div&gt;
 
-				&lt;div class=&quot;btn-secondary&quot; class=&quot;prevent-select&quot;&gt;
+				&lt;div class=&quot;btn-secondary prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Continue&quot;&gt;&gt;
 						&lt;&lt;run UI.saves()&gt;&gt;
 					&lt;&lt;/button&gt;&gt;
 				&lt;/div&gt;
 
-				&lt;div class=&quot;btn-tertiary&quot; class=&quot;prevent-select&quot;&gt;
+				&lt;div class=&quot;btn-tertiary prevent-select&quot;&gt;
 					&lt;&lt;button &quot;Settings&quot;&gt;&gt;
 						&lt;&lt;OpenPanel &quot;Settings&quot;&gt;&gt;
 					&lt;&lt;/button&gt;&gt;
@@ -3510,9 +3917,12 @@ setup.area.check = function(area) {
 			&lt;/nav&gt;
 		&lt;/div&gt;
 
-		&lt;div class=&quot;menu-extra-content&quot; class=&quot;prevent-select&quot;&gt;
-			&lt;h3 class=&quot;extra-title&quot;&gt;InDev 0.25.0&lt;/h3&gt;
-			&lt;p class=&quot;extra-text&quot;&gt;Skill and battle system update part 2&lt;/p&gt;
+		&lt;div class=&quot;menu-extra-content prevent-select&quot;&gt;
+			&lt;div class=&quot;extra-header-row&quot;&gt;
+				&lt;h3 class=&quot;extra-title&quot;&gt;&lt;span&gt;✦&lt;/span&gt; InDev 0.26.1&lt;/h3&gt;
+				&lt;span class=&quot;extra-badge&quot;&gt;New&lt;/span&gt;
+			&lt;/div&gt;
+			&lt;p class=&quot;extra-text&quot;&gt;&lt;/p&gt;
 		&lt;/div&gt;
 
 		&lt;footer class=&quot;menu-footer&quot;&gt;
@@ -3523,14 +3933,13 @@ setup.area.check = function(area) {
 &lt;/div&gt;
 
 &lt;&lt;run
-$(document).on(&quot;:passagedisplay&quot;, function () {
+$(document).one(&quot;:passagedisplay&quot;, function () {
     if ($(&quot;.menu-bg-artwork&quot;).length) {
         const imagePath = `assets/images/ui/illustration/background_art${setup.randInt(1, 30)}.jpg`;
-
-        $(&quot;.menu-bg-artwork&quot;).css(
-            &quot;background-image&quot;,
-            `url(&quot;${imagePath}&quot;)`
-        );
+        $(&quot;.menu-bg-artwork&quot;).css(&quot;background-image&quot;, `url(&quot;${imagePath}&quot;)`);
+    }
+    if (typeof setup.menu?.initEmbers === &quot;function&quot;) {
+        setup.menu.initEmbers();
     }
 });
 &gt;&gt;</tw-passagedata><tw-passagedata pid="45" name="Start-Loading-Screen" tags="nobr" position="1000,1300" size="200,100">&lt;&lt;run UIBar.hide().stow()&gt;&gt;
@@ -3635,7 +4044,7 @@ setup.event.data = {
 &lt;div class=&quot;realm-header&quot;&gt;
   &lt;span class=&quot;header-title&quot;&gt;Incarnation&lt;/span&gt;
   &lt;span class=&quot;points-badge&quot;&gt;
-    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= $game.featScore&gt;&gt;&lt;/span&gt;
+    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= _points&gt;&gt;&lt;/span&gt;
   &lt;/span&gt;
 &lt;/div&gt;
 
@@ -3742,24 +4151,38 @@ Empty Slot
 
 &lt;&lt;/for&gt;&gt;</tw-passagedata><tw-passagedata pid="50" name="Setting-Data" tags="data" position="1750,25" size="200,100"></tw-passagedata><tw-passagedata pid="51" name="Character-Creation-2" tags="nobr" position="1000,1625" size="200,100">&lt;&lt;include &quot;CreationContent--Logic&quot;&gt;&gt;
 
+&lt;&lt;set _points = $game.featScore - setup.cardpop.totalUsage()&gt;&gt;
+
 &lt;div class=&quot;realm-header&quot;&gt;
   &lt;span class=&quot;header-title&quot;&gt;Incarnation&lt;/span&gt;
   &lt;span class=&quot;points-badge&quot;&gt;
-    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= $game.featScore&gt;&gt;&lt;/span&gt;
+    POINTS: &lt;span class=&quot;points-val&quot;&gt;&lt;&lt;= _points&gt;&gt;&lt;/span&gt;
   &lt;/span&gt;
 &lt;/div&gt;
 
-Who are you? &lt;&lt;textbox &quot;$game.pc.name&quot; &quot;&quot;&gt;&gt;
-&lt;br&gt;
+&lt;div id=&quot;creation-body&quot;&gt;
 
-Portait: 
-&lt;div class=&quot;card-grid&quot; style=&quot;--grid-cols: 1;&quot; id=&quot;ccPortrait&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;realm-section-title&quot;&gt;Identity&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  Bestow a name upon this vessel as you prepare to cross over into the Great Wilderness.
+&lt;/div&gt;
 
-Innate Trait:
+&lt;&lt;textbox &quot;$game.pc.name&quot; &quot;&quot;&gt;&gt;
 
-&lt;&lt;button &quot;Continue&quot;&gt;&gt;
-	&lt;&lt;Play &quot;Debug Passage&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;
+&lt;div class=&quot;realm-section-title&quot;&gt;Appearance&lt;/div&gt;
+&lt;div class=&quot;realm-section-desc&quot;&gt;
+  Select your physical portrait manifestation for this lifetime.
+&lt;/div&gt;
+
+&lt;div class=&quot;portrait-grid&quot; id=&quot;ccPortrait&quot;&gt;&lt;/div&gt;
+
+&lt;div class=&quot;action-container&quot;&gt;
+  &lt;&lt;button &quot;Continue&quot;&gt;&gt;
+	  &lt;&lt;Play &quot;Debug Passage&quot;&gt;&gt;
+  &lt;&lt;/button&gt;&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
 
 &lt;&lt;done&gt;&gt;
 	&lt;&lt;run setup.cardpop.portrait();&gt;&gt;
@@ -3768,12 +4191,12 @@ setup.parseText = function(text) {
     let result = &quot;&quot;;
 
     // LINE DEFINITION
-    let delay = 500;
-    let lineList = text.match(/(.+)/g);
+    let delay = 250;
+    let lineList = text.match(/(.+)/g) || [];
 
     for(const line of lineList){
         result += `&lt;span class=&quot;line&quot; style=&quot;animation-delay:${delay}ms&quot;&gt;${line}&lt;/span&gt;`;
-        delay += 500;
+        delay += 250;
     }
 
     // REMOVING NEW LINES
@@ -4393,10 +4816,9 @@ setup.cardpop = {
     },
     portrait: function(){
         const vars = State.variables.game;
+        $(`#ccPortrait`).empty();
 
         let charSet = &quot;&quot;;
-
-        console.log(setup.race.asset);
 
         for(const set of Object.keys(setup.race.asset)){
             if(setup.race.asset[set].scope.some(element =&gt; element == vars.pc.race)){
@@ -4405,10 +4827,28 @@ setup.cardpop = {
             }
         }
 
-        for(const portrait of setup.race.asset[charSet].portrait[vars.pc.gender.toLowerCase()]){
+        if(!charSet || !setup.race.asset[charSet] || !setup.race.asset[charSet].portrait) return;
+
+        const gender = (vars.pc.gender || &quot;Male&quot;).toLowerCase();
+        const list = setup.race.asset[charSet].portrait[gender] || [];
+
+        if((!vars.pc.img || !list.some(p =&gt; `${p}-1` === vars.pc.img)) &amp;&amp; list.length &gt; 0){
+            vars.pc.img = `${list[0]}-1`;
+        }
+
+        for(const portrait of list){
+            const portraitKey = `${portrait}-1`;
             const div = $(&quot;&lt;div&gt;&quot;);
 
-            div.append(`&lt;img src=&quot;assets/images/pc/portrait/${portrait}-1.jpg&quot; width=&quot;50px&quot;&gt;`);
+            div.addClass(&quot;portrait-card&quot; + (vars.pc.img === portraitKey ? &quot; selected&quot; : &quot;&quot;));
+            div.append(`&lt;img src=&quot;assets/images/pc/portrait/${portrait}-1.jpg&quot; alt=&quot;${portrait}&quot; class=&quot;prevent-select&quot; draggable=&quot;false&quot;&gt;`);
+
+            div.on(&quot;click&quot;, function(){
+                vars.pc.img = portraitKey;
+                $(&quot;#ccPortrait .portrait-card&quot;).removeClass(&quot;selected&quot;);
+                div.addClass(&quot;selected&quot;);
+            });
+
             $(`#ccPortrait`).append(div);
         }
     },
@@ -4452,6 +4892,7 @@ setup.cardpop = {
 
                 $(`#${cardParent}`).empty();
                 this[card]();
+                if(card === &quot;gender&quot; || card === &quot;race&quot;) this.portrait();
 
                 return;
             }
@@ -4477,6 +4918,7 @@ setup.cardpop = {
 
                     $(`#${cardParent}`).empty();
                     this[card]();
+                    if(card === &quot;gender&quot; || card === &quot;race&quot;) this.portrait();
 
                     return;
                 }
@@ -4499,6 +4941,7 @@ setup.cardpop = {
 
                 $(`#${cardParent}`).empty();
                 this[card]();
+                if(card === &quot;gender&quot; || card === &quot;race&quot;) this.portrait();
             }
 
         });

@@ -72,25 +72,36 @@
 }
 
 /* =========================================================================
-   STATIONARY BACKGROUND LAYERS
+   STATIONARY BACKGROUND & ATMOSPHERE LAYERS
    ========================================================================= */
 
-/* --- Layer 1: Base Artwork --- */
+/* --- Layer 1: Base Artwork with Cinematic Ken Burns Breathe --- */
 .menu-container .menu-bg-artwork {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 60vh; /* Sits on the upper 60% of the viewport */
+	height: 72vh;
 	z-index: 1;
 	
 	background-position: center top;
 	background-repeat: no-repeat;
 	background-size: cover;
-	opacity: 0.55; 
+	opacity: 0.65; 
+	animation: bg-breathe 25s ease-in-out infinite alternate;
+	will-change: transform;
 }
 
-/* Nike-inspired bottom-fade gradient */
+@keyframes bg-breathe {
+	0% {
+		transform: scale(1.0);
+	}
+	100% {
+		transform: scale(1.05);
+	}
+}
+
+/* Seamless multi-stop fade gradient into deep background */
 .menu-container .menu-bg-artwork::after {
 	content: '';
 	position: absolute;
@@ -98,12 +109,12 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(to bottom, transparent 30%, #0a0a0a 100%);
+	background: linear-gradient(to bottom, rgba(10, 10, 10, 0.15) 0%, transparent 35%, rgba(10, 10, 10, 0.75) 75%, #0a0a0a 100%);
 	pointer-events: none;
 }
 
-/* --- Layer 2: Drifting Mist & Smoke (No-Blur Performance Tuning) --- */
-.menu-container .menu-smoke-layer {
+/* --- Layer 2: Real Seamless Rolling Fog / Mist --- */
+.menu-container .menu-fog-layer {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -111,34 +122,111 @@
 	height: 100%;
 	z-index: 2; 
 	overflow: hidden;
+	pointer-events: none;
 }
 
-/* We remove the GPU-heavy "filter: blur()" filter. 
-   Instead, we use soft-feathered CSS radial-gradients. */
-.menu-container .mist-cloud {
+.menu-container .fog-band {
 	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200%;
+	height: 100%;
+	display: flex;
+	pointer-events: none;
+	will-change: transform, opacity;
+}
+
+.menu-container .fog-image {
+	width: 50%;
+	height: 100%;
+	flex-shrink: 0;
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	background-size: cover;
+	pointer-events: none;
+}
+
+/* Fog Layer 1: Dense low rolling fog drifting eastward */
+#foglayer_01 .fog-image {
+	background-image: url('../assets/images/ui/fog1.png');
+}
+
+#foglayer_01 {
+	animation: fog-drift-left 34s linear infinite, fog-opacity-01 12s ease-in-out infinite alternate;
+	mix-blend-mode: screen;
+}
+
+/* Fog Layer 2: High billowing misty veil drifting westward */
+#foglayer_02 .fog-image {
+	background-image: url('../assets/images/ui/fog2.png');
+}
+
+#foglayer_02 {
+	animation: fog-drift-right 46s linear infinite, fog-opacity-02 18s ease-in-out infinite alternate;
+	mix-blend-mode: screen;
+}
+
+/* Fog Layer 3: Ambient ground mist with warm golden aura */
+#foglayer_03 .fog-image {
+	background-image: url('../assets/images/ui/fog1.png');
+	filter: sepia(0.35) saturate(1.3) hue-rotate(-12deg);
+}
+
+#foglayer_03 {
+	animation: fog-drift-left 22s linear infinite, fog-opacity-03 15s ease-in-out infinite alternate;
+	mix-blend-mode: screen;
+	opacity: 0.45;
+}
+
+/* GPU Accelerated Fog Movement */
+@keyframes fog-drift-left {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	100% {
+		transform: translate3d(-50%, 0, 0);
+	}
+}
+
+@keyframes fog-drift-right {
+	0% {
+		transform: translate3d(-50%, 0, 0);
+	}
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+/* Organic breathing opacity cycles */
+@keyframes fog-opacity-01 {
+	0% { opacity: 0.25; }
+	35% { opacity: 0.65; }
+	70% { opacity: 0.35; }
+	100% { opacity: 0.7; }
+}
+
+@keyframes fog-opacity-02 {
+	0% { opacity: 0.55; }
+	40% { opacity: 0.2; }
+	75% { opacity: 0.5; }
+	100% { opacity: 0.25; }
+}
+
+@keyframes fog-opacity-03 {
+	0% { opacity: 0.2; }
+	50% { opacity: 0.55; }
+	100% { opacity: 0.3; }
+}
+
+/* --- Layer 2.5: Floating Embers Canvas --- */
+.menu-container #menu-embers-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
+	z-index: 3;
 	pointer-events: none;
-	mix-blend-mode: screen; /* Blends light particles elegantly into dark scenes */
-}
-
-/* Mist Cloud 1: Soft warm gold/amber glow */
-.menu-container .cloud-1 {
-	background-image: radial-gradient(circle at 35% 35%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
-	animation: drift-one 25s infinite alternate ease-in-out;
-}
-
-/* Mist Cloud 2: Smooth dark slate mist */
-.menu-container .cloud-2 {
-	background-image: radial-gradient(circle at 65% 65%, rgba(40, 40, 50, 0.45) 0%, transparent 60%);
-	animation: drift-two 35s infinite alternate ease-in-out;
-}
-
-/* Mist Cloud 3: Ultra-soft pale fog */
-.menu-container .cloud-3 {
-	background-image: radial-gradient(circle at 15% 75%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
-	animation: drift-one 30s infinite alternate-reverse ease-in-out;
 }
 
 /* --- Layer 3: Dark Vignette Spotlight --- */
@@ -148,35 +236,9 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 3; 
-	background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(5, 5, 5, 0.95) 100%);
+	z-index: 4; 
+	background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.05) 20%, rgba(5, 6, 8, 0.7) 65%, rgba(5, 5, 5, 0.95) 100%);
 	pointer-events: none;
-}
-
-/* --- GPU-ACCELERATED DRIFT ANIMATIONS --- */
-/* We switch to translate3d to offload rendering strictly to the graphics card */
-@keyframes drift-one {
-	0% {
-		transform: translate3d(0, 0, 0);
-	}
-	50% {
-		transform: translate3d(4vw, 2vh, 0);
-	}
-	100% {
-		transform: translate3d(-2vw, -1vh, 0);
-	}
-}
-
-@keyframes drift-two {
-	0% {
-		transform: translate3d(0, 0, 0);
-	}
-	50% {
-		transform: translate3d(-4vw, -2vh, 0);
-	}
-	100% {
-		transform: translate3d(2vw, 1vh, 0);
-	}
 }
 
 /* =========================================================================
@@ -190,6 +252,33 @@
 	align-items: center;
 	max-width: 100%;
 	flex-shrink: 0;
+	position: relative;
+}
+
+/* Ambient golden glow behind the logo */
+.menu-container .menu-header::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90%;
+	height: 90%;
+	background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.04) 50%, transparent 75%);
+	filter: blur(25px);
+	pointer-events: none;
+	animation: logo-glow-pulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes logo-glow-pulse {
+	0% {
+		opacity: 0.6;
+		transform: translate(-50%, -50%) scale(0.95);
+	}
+	100% {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1.08);
+	}
 }
 
 .menu-container #displayTitle-logo {
@@ -198,7 +287,19 @@
 	max-height: 25vh;
 	height: auto;
 	object-fit: contain;
-	filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.8));
+	position: relative;
+	z-index: 1;
+	filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(212, 175, 55, 0.15));
+	animation: logo-float 8s ease-in-out infinite alternate;
+}
+
+@keyframes logo-float {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-4px);
+	}
 }
 
 /* --- NAVIGATION GROUP --- */
@@ -216,35 +317,39 @@
 	display: block;
 	width: 100%;
 	padding: 13px 30px !important;
-	font-family: "Georgia", "Times New Roman", serif !important;
-	font-weight: 400 !important;
-	letter-spacing: 0.15em !important;
-	text-transform: capitalize;
-	border-radius: 3px !important;
+	font-family: 'Alte-B', 'Alte', 'Roboto-B', "Georgia", serif !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.18em !important;
+	text-transform: uppercase;
+	border-radius: 4px !important;
 	cursor: pointer;
 	box-sizing: border-box;
+	backdrop-filter: blur(8px);
 	transition: all var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 	overflow: hidden;
 }
 
 .menu-container .menu-navigation button:active {
-	transform: scale(0.98) !important;
+	transform: scale(0.97) !important;
 }
 
 /* --- BUTTON HIERARCHY --- */
 .menu-container .btn-primary button {
-	background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(10,10,10,0.95) 100%) !important;
-	border: 1px solid var(--menu-gold-dim) !important;
+	background: linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(20,22,28,0.92) 50%, rgba(10,10,12,0.96) 100%) !important;
+	border: 1px solid rgba(212, 175, 55, 0.5) !important;
+	border-top: 1px solid rgba(255, 235, 160, 0.65) !important;
 	color: #ffffff !important;
-	font-weight: 600 !important;
-	text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(212, 175, 55, 0.1);
+	font-weight: 700 !important;
+	text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(212, 175, 55, 0.15), inset 0 0 14px rgba(212, 175, 55, 0.1);
 }
+
 .menu-container .btn-primary button:hover {
 	border-color: var(--menu-gold) !important;
-	background: linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(20,20,20,0.95) 100%) !important;
-	box-shadow: 0 0 20px var(--menu-gold-glow), inset 0 0 15px rgba(212, 175, 55, 0.2);
-	letter-spacing: 0.2em !important;
+	background: linear-gradient(135deg, rgba(212,175,55,0.32) 0%, rgba(30,28,22,0.95) 50%, rgba(15,15,18,0.98) 100%) !important;
+	box-shadow: 0 0 25px rgba(212, 175, 55, 0.35), inset 0 0 18px rgba(212, 175, 55, 0.25);
+	letter-spacing: 0.22em !important;
+	transform: translateY(-2px);
 }
 
 /* Alignment ticks appearing on hover */
@@ -284,67 +389,95 @@
 
 /* --- SECONDARY ACTION --- */
 .menu-container .btn-secondary button {
-	background: var(--menu-button-bg) !important;
+	background: linear-gradient(135deg, rgba(22, 25, 32, 0.85) 0%, rgba(12, 14, 18, 0.9) 100%) !important;
 	border: 1px solid var(--menu-border-color) !important;
 	color: var(--menu-text-light) !important;
-	box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.4);
+	box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 .menu-container .btn-secondary button:hover {
 	color: #ffffff !important;
-	border-color: rgba(255, 255, 255, 0.35) !important;
-	background: rgba(25, 25, 25, 0.85) !important;
-	box-shadow: 0 0 15px rgba(255, 255, 255, 0.05), 0 2px 8px rgba(0, 0, 0, 0.6);
+	border-color: rgba(212, 175, 55, 0.45) !important;
+	background: linear-gradient(135deg, rgba(32, 35, 44, 0.95) 0%, rgba(18, 20, 26, 0.95) 100%) !important;
+	box-shadow: 0 0 18px rgba(212, 175, 55, 0.15), 0 4px 12px rgba(0, 0, 0, 0.6);
 	letter-spacing: 0.2em !important;
+	transform: translateY(-2px);
 }
 
 /* --- TERTIARY ACTION --- */
 .menu-container .btn-tertiary button {
-	background: rgba(10, 10, 10, 0.6) !important;
-	border: 1px solid rgba(255, 255, 255, 0.15) !important;
-	color: rgba(255, 255, 255, 0.55) !important;
+	background: rgba(14, 16, 20, 0.65) !important;
+	border: 1px solid rgba(255, 255, 255, 0.12) !important;
+	color: rgba(255, 255, 255, 0.6) !important;
 	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
 }
 .menu-container .btn-tertiary button:hover {
 	color: #ffffff !important;
 	border-color: rgba(255, 255, 255, 0.35) !important;
-	background: rgba(20, 20, 20, 0.8) !important;
-	box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+	background: rgba(24, 26, 32, 0.85) !important;
+	box-shadow: 0 0 14px rgba(255, 255, 255, 0.08);
 	letter-spacing: 0.2em !important;
+	transform: translateY(-1px);
 }
 
 /* --- EXTRA CONTENT SECTION --- */
 .menu-container .menu-extra-content {
 	width: 100%;
-	max-width: 420px;
-	background: rgba(0, 0, 0, 0.55);
-	border: 1px solid rgba(255, 255, 255, 0.03);
+	max-width: 440px;
+	background: linear-gradient(135deg, rgba(16, 18, 24, 0.82) 0%, rgba(10, 12, 16, 0.88) 100%);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(212, 175, 55, 0.25);
+	border-top: 2px solid var(--menu-gold);
 	border-radius: 4px;
-	padding: 24px;
+	padding: 18px 24px;
 	box-sizing: border-box;
-	margin-top: 40px; 
-	margin-bottom: 40px;
+	margin-top: 35px; 
+	margin-bottom: 25px;
 	text-align: left;
 	flex-shrink: 0;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+	box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), inset 0 0 20px rgba(212, 175, 55, 0.04);
+	position: relative;
+}
+
+.menu-container .extra-header-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+	padding-bottom: 8px;
+	margin-bottom: 10px;
 }
 
 .menu-container .extra-title {
-	font-family: "Georgia", serif;
-	font-size: 1.1rem;
+	font-family: 'Alte-B', 'Alte', "Georgia", serif;
+	font-size: 0.98rem;
 	color: var(--menu-gold);
-	margin-top: 0;
-	margin-bottom: 12px;
-	letter-spacing: 0.05em;
-	border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-	padding-bottom: 6px;
+	margin: 0;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.menu-container .extra-badge {
+	font-family: 'Alte', sans-serif;
+	font-size: 0.7rem;
+	letter-spacing: 0.1em;
+	color: #070809;
+	background: var(--menu-gold);
+	padding: 2px 8px;
+	border-radius: 2px;
+	font-weight: 700;
+	text-transform: uppercase;
 }
 
 .menu-container .extra-text {
-	font-family: "Georgia", "Times New Roman", serif;
-	font-size: 0.85rem;
+	font-family: 'Alte', 'Roboto-R', sans-serif;
+	font-size: 0.9rem;
 	line-height: 1.5;
-	color: var(--menu-text-muted);
-	margin: 8px 0;
+	color: var(--menu-text-light);
+	opacity: 0.85;
+	margin: 6px 0;
 }
 
 /* --- FOOTER --- */
